@@ -1,0 +1,83 @@
+@model GazaRealEstatePortal.ViewModels.LoginViewModel
+@{
+    ViewData["Title"] = "تسجيل الدخول";
+    Layout = "~/Views/Shared/_PublicLayout.cshtml";
+}
+
+<div class="auth-page py-5">
+  <div class="container">
+    <div class="auth-card">
+      <div class="row g-0">
+        <!-- Image Side -->
+        <div class="col-lg-5 d-none d-lg-block">
+          <div class="auth-image">
+            <div class="auth-image-content text-start">
+              <h3 class="fw-bold mb-2">مرحباً بك مجدداً!</h3>
+              <p class="mb-0 text-white-50">انضم إلى أكبر مجتمع عقاري في غزة.</p>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Form Side -->
+        <div class="col-lg-7">
+          <div class="auth-form-container">
+            <div class="auth-header">
+              <a asp-controller="Home" asp-action="Index" class="text-decoration-none">
+                <div class="brand-icon"><i class="bi bi-buildings text-white fs-3"></i></div>
+                <h2>تسجيل الدخول</h2>
+              </a>
+              <p>مرحباً بعودتك! يرجى إدخال بياناتك للمتابعة.</p>
+            </div>
+            
+            <form asp-controller="Auth" asp-action="Login" method="post">
+              <div asp-validation-summary="ModelOnly" class="text-danger mb-3 font-cairo fw-bold"></div>
+              
+              <div class="form-group-custom">
+                <label asp-for="Email" class="form-label-custom">البريد الإلكتروني</label>
+                <input asp-for="Email" type="email" class="form-control-custom" placeholder="أدخل بريدك الإلكتروني" required>
+                <span asp-validation-for="Email" class="text-danger small mt-1 d-block"></span>
+              </div>
+              
+              <div class="form-group-custom">
+                <div class="d-flex justify-content-between mb-2">
+                  <label asp-for="Password" class="form-label-custom mb-0">كلمة المرور</label>
+                  <a href="#" class="forgot-password-link">نسيت كلمة المرور؟</a>
+                </div>
+                <input asp-for="Password" type="password" class="form-control-custom" placeholder="أدخل كلمة المرور" required>
+                <span asp-validation-for="Password" class="text-danger small mt-1 d-block"></span>
+              </div>
+              
+              <div class="form-check mb-4">
+                <input asp-for="RememberMe" class="form-check-input">
+                <label asp-for="RememberMe" class="form-check-label remember-me-label">
+                  تذكرني على هذا الجهاز
+                </label>
+              </div>
+              
+              <button type="submit" class="btn-primary-custom w-100 justify-content-center btn-auth-submit">
+                تسجيل الدخول <i class="bi bi-box-arrow-in-right"></i>
+              </button>
+            </form>
+            
+            <div class="divider">أو الدخول بواسطة</div>
+            
+            <div class="social-login">
+              <button class="btn-social" type="button">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/5/53/Google_%22G%22_Logo.svg" alt="Google" width="18">
+                جوجل
+              </button>
+              <button class="btn-social" type="button">
+                <i class="bi bi-facebook facebook-icon"></i>
+                فيسبوك
+              </button>
+            </div>
+            
+            <p class="text-center mt-4 mb-0 auth-footer-text">
+              ليس لديك حساب؟ <a asp-controller="Auth" asp-action="Register" class="text-primary-custom fw-bold">إنشاء حساب جديد</a>
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

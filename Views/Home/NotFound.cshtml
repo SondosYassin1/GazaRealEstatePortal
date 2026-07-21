@@ -1,0 +1,16 @@
+@{
+    ViewData["Title"] = "الصفحة غير موجودة";
+    Layout = "~/Views/Shared/_PublicLayout.cshtml";
+}
+
+<div class="error-page" style="min-height: 60vh; display: flex; align-items: center; justify-content: center; background-color: #f8f9fa;">
+  <div class="error-page-content mx-auto text-center">
+    <div class="error-code text-primary-custom" style="font-size: 8rem; font-weight: 900; line-height: 1;">404</div>
+    <div class="error-message fs-2 fw-bold mb-3">عذراً، الصفحة غير موجودة</div>
+    <p class="error-desc text-secondary mb-4">يبدو أن الصفحة التي تبحث عنها قد تم نقلها أو حذفها، أو أنك أدخلت الرابط بشكل خاطئ.</p>
+    
+    <a asp-controller="Home" asp-action="Index" class="btn btn-primary-custom px-4 py-2 font-cairo fw-600 rounded-3 shadow-sm">
+      <i class="bi bi-house-door me-2"></i> العودة للصفحة الرئيسية
+    </a>
+  </div>
+</div>

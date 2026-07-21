@@ -1,0 +1,111 @@
+@using GazaRealEstatePortal.Models.Enums
+@model GazaRealEstatePortal.ViewModels.PropertiesPageViewModel
+@{
+    ViewData["Title"] = "إدارة العقارات";
+    Layout = "~/Views/Shared/_AdminDashboardLayout.cshtml";
+    bool showFilter = ViewBag.ShowFilter ?? false;
+}
+
+<div class="dashboard-header d-block d-md-flex">
+  <div>
+    <h1>إدارة العقارات</h1>
+    <p>مراجعة العقارات المضافة من قبل المستخدمين وتغيير حالتها.</p>
+  </div>
+  @if (showFilter)
+  {
+          <div class="mt-3 mt-md-0 w-100 max-w-300">
+        <form method="get" asp-action="Properties" class="d-flex flex-column gap-2">
+            <div class="search-bar-wrap w-100 mb-2">
+                <input type="text" asp-for="Filter.Keyword" placeholder="بحث عن عقار...">
+                <i class="bi bi-search search-icon"></i>
+            </div>
+            <select asp-for="Filter.PropertyType" class="form-select-custom form-control-custom form-select-sm w-100" asp-items="GazaRealEstatePortal.Helpers.EnumHelper.GetLocalizedEnumSelectList<PropertyType>()" onchange="this.form.submit()">
+                <option value="">كل أنواع العقارات</option>
+            </select>
+        </form>
+      </div>
+  }
+</div>
+
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success">@TempData["SuccessMessage"]</div>
+}
+@if (TempData["ErrorMessage"] != null)
+{
+    <div class="alert alert-danger">@TempData["ErrorMessage"]</div>
+}
+
+<!-- PROPERTIES TABLE -->
+<div class="card-custom p-4">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h5 class="fw-bold text-primary m-0">قائمة العقارات</h5>
+  </div>
+  
+  @if (!Model.Results.Any())
+  {
+      <div class="alert alert-info">لا يوجد عقارات.</div>
+  }
+  else
+  {
+      <div class="table-responsive">
+        <table id="adminPropertiesTable" class="table-custom">
+          <thead>
+            <tr>
+              <th>العقار</th>
+              <th>السعر</th>
+              <th>الحالة</th>
+              <th>تاريخ الإضافة</th>
+              <th>الإجراءات</th>
+            </tr>
+          </thead>
+          <tbody>
+            @foreach (var property in Model.Results)
+            {
+                <tr>
+                  <td>
+                    <div class="d-flex align-items-center gap-3">
+                      <img src="@property.MainImageUrl" alt="Prop" class="property-list-img">
+                      <div>
+                        <div class="fw-bold text-primary">@property.Title</div>
+                        <div class="text-muted small">@property.Governorate - @property.CityAreaCamp</div>
+                      </div>
+                    </div>
+                  </td>
+                  <td class="fw-bold">@property.Price ₪</td>
+                  <td>
+                      @if(property.Status == PropertyStatus.Pending)
+                      {
+                          <span class="badge-custom badge-warning">قيد المراجعة</span>
+                      }
+                      else if(property.Status == PropertyStatus.Approved)
+                      {
+                          <span class="badge-custom badge-success">معتمد</span>
+                      }
+                      else
+                      {
+                          <span class="badge-custom badge-danger">مرفوض</span>
+                      }
+                  </td>
+                  <td>@property.CreatedAt.ToString("yyyy-MM-dd")</td>
+                  <td>
+                    <div class="d-flex gap-2">
+                      <a asp-controller="Home" asp-action="PropertyDetails" asp-route-id="@property.Id" class="action-btn action-btn-view" title="عرض التفاصيل" target="_blank"><i class="bi bi-eye"></i></a>
+                      @if (property.Status == PropertyStatus.Pending)
+                      {
+                          <form asp-action="ApproveProperty" asp-route-id="@property.Id" method="post" class="m-0 p-0">
+                              <button type="submit" class="action-btn action-btn-approve border-0" title="قبول"><i class="bi bi-check-lg"></i></button>
+                          </form>
+                          <form asp-action="RejectProperty" asp-route-id="@property.Id" method="post" class="m-0 p-0">
+                              <button type="submit" class="action-btn action-btn-delete border-0" title="رفض"><i class="bi bi-x-lg"></i></button>
+                          </form>
+                      }
+                    </div>
+                  </td>
+                </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+  }
+</div>

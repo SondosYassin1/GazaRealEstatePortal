@@ -1,0 +1,96 @@
+@model GazaRealEstatePortal.ViewModels.AdminDashboardViewModel
+@{
+    ViewData["Title"] = "لوحة تحكم الإدارة";
+    Layout = "~/Views/Shared/_AdminDashboardLayout.cshtml";
+}
+
+<div class="dashboard-header">
+  <div>
+    <h1><span class="admin-badge text-danger border border-danger">مدير</span> إحصائيات المنصة</h1>
+    <p>مرحباً بك في لوحة تحكم الإدارة. إليك نظرة عامة على نشاط المنصة.</p>
+  </div>
+</div>
+
+<!-- STATS -->
+<div class="row g-4 mb-5">
+  <div class="col-md-6 col-lg-3">
+    <div class="stat-card">
+      <div class="stat-icon stat-icon-blue"><i class="bi bi-people"></i></div>
+      <div>
+        <div class="stat-value">@Model.TotalUsers</div>
+        <div class="stat-label">إجمالي المستخدمين</div>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-6 col-lg-3">
+    <div class="stat-card">
+      <div class="stat-icon stat-icon-primary-soft"><i class="bi bi-buildings"></i></div>
+      <div>
+        <div class="stat-value">@Model.TotalProperties</div>
+        <div class="stat-label">إجمالي العقارات</div>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-6 col-lg-3">
+    <div class="stat-card">
+      <div class="stat-icon stat-icon-accent"><i class="bi bi-hourglass-split"></i></div>
+      <div>
+        <div class="stat-value">@Model.PendingCount</div>
+        <div class="stat-label">عقارات قيد المراجعة</div>
+        @if(Model.PendingCount > 0){
+            <div class="stat-change text-warning">تحتاج إلى اتخاذ إجراء</div>
+        }
+      </div>
+    </div>
+  </div>
+  <div class="col-md-6 col-lg-3">
+    <div class="stat-card">
+      <div class="stat-icon stat-icon-green"><i class="bi bi-check2-all"></i></div>
+      <div>
+        <div class="stat-value">@Model.ApprovedCount</div>
+        <div class="stat-label">عقارات معتمدة</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="row g-4">
+  <div class="col-lg-12">
+    <div class="card-custom p-4 h-100">
+      <h5 class="mb-4 text-primary-custom fw-bold">أحدث العقارات قيد المراجعة</h5>
+      
+      @if (!Model.LastPendingProperties.Any())
+      {
+          <div class="alert alert-info">لا يوجد عقارات قيد المراجعة حالياً.</div>
+      }
+      else
+      {
+          <div class="d-flex flex-column gap-3">
+            @foreach (var property in Model.LastPendingProperties)
+            {
+                <div class="d-flex align-items-center justify-content-between p-3 list-item-custom flex-wrap gap-2">
+                  <div class="d-flex align-items-center gap-3">
+                    <img src="@property.MainImageUrl" class="img-60-60 border rounded">
+                    <div>
+                      <div class="fw-bold text-dark">@property.Title</div>
+                      <div class="text-muted small">@property.Price ₪ — @property.CreatedAt.ToString("yyyy-MM-dd")</div>
+                    </div>
+                  </div>
+                  <div class="d-flex align-items-center gap-2">
+                    <span class="badge-custom badge-warning me-3 d-none d-sm-inline-block">قيد المراجعة</span>
+                    <form asp-action="ApproveProperty" asp-route-id="@property.Id" method="post" class="m-0">
+                      <button type="submit" class="btn btn-sm btn-success px-3">موافقة</button>
+                    </form>
+                    <form asp-action="RejectProperty" asp-route-id="@property.Id" method="post" class="m-0">
+                      <button type="submit" class="btn btn-sm btn-danger px-3">رفض</button>
+                    </form>
+                    <a asp-controller="Home" asp-action="PropertyDetails" asp-route-id="@property.Id" class="btn btn-sm btn-outline-info" target="_blank"><i class="bi bi-eye"></i></a>
+                  </div>
+                </div>
+            }
+          </div>
+          <a asp-action="PendingProperties" class="btn btn-outline-primary-custom w-100 mt-4">عرض كل طلبات المراجعة</a>
+      }
+    </div>
+  </div>
+</div>

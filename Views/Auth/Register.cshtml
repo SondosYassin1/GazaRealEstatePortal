@@ -1,0 +1,105 @@
+@model GazaRealEstatePortal.ViewModels.RegisterViewModel
+@{
+    ViewData["Title"] = "إنشاء حساب";
+    Layout = "~/Views/Shared/_PublicLayout.cshtml";
+}
+
+<div class="auth-page py-5">
+  <div class="container">
+    <div class="auth-card">
+      <div class="row g-0">
+        <!-- Image Side -->
+        <div class="col-lg-5 d-none d-lg-block">
+          <div class="auth-image">
+            <div class="auth-image-content text-start">
+              <h3 class="fw-bold mb-2">ابحث عن منزل أحلامك!</h3>
+              <p class="mb-0 text-white-50">أنشئ حساباً لحفظ العقارات، والتواصل مع الملاك، وعرض عقارك بسهولة ويسر.</p>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Form Side -->
+        <div class="col-lg-7">
+          <div class="auth-form-container">
+            <div class="auth-header">
+              <a asp-controller="Home" asp-action="Index" class="text-decoration-none">
+                <div class="brand-icon"><i class="bi bi-person-plus text-white fs-3"></i></div>
+                <h2>إنشاء حساب جديد</h2>
+              </a>
+              <p>انضم إلينا الآن للوصول إلى كافة ميزات المنصة</p>
+            </div>
+            
+            <form asp-controller="Auth" asp-action="Register" method="post">
+              <div asp-validation-summary="ModelOnly" class="text-danger mb-3 font-cairo fw-bold"></div>
+              
+              <div class="row g-3">
+                <div class="col-md-6 form-group-custom mb-0">
+                  <label asp-for="FirstName" class="form-label-custom">الاسم الأول</label>
+                  <input asp-for="FirstName" type="text" class="form-control-custom" placeholder="الاسم الأول" required>
+                  <span asp-validation-for="FirstName" class="text-danger small mt-1 d-block"></span>
+                </div>
+                <div class="col-md-6 form-group-custom mb-0">
+                  <label asp-for="LastName" class="form-label-custom">اسم العائلة</label>
+                  <input asp-for="LastName" type="text" class="form-control-custom" placeholder="اسم العائلة" required>
+                  <span asp-validation-for="LastName" class="text-danger small mt-1 d-block"></span>
+                </div>
+                <div class="col-md-6 form-group-custom mb-0">
+                  <label asp-for="Email" class="form-label-custom">البريد الإلكتروني</label>
+                  <input asp-for="Email" type="email" class="form-control-custom" placeholder="أدخل بريدك الإلكتروني" required>
+                  <span asp-validation-for="Email" class="text-danger small mt-1 d-block"></span>
+                </div>
+                <div class="col-md-6 form-group-custom mb-0">
+                  <label asp-for="PhoneNumber" class="form-label-custom">رقم الهاتف</label>
+                  <input asp-for="PhoneNumber" type="tel" class="form-control-custom" placeholder="مثال: 0590000000" required>
+                  <span asp-validation-for="PhoneNumber" class="text-danger small mt-1 d-block"></span>
+                </div>
+                <div class="col-md-6 form-group-custom mb-0">
+                  <label asp-for="Password" class="form-label-custom">كلمة المرور</label>
+                  <input asp-for="Password" type="password" class="form-control-custom" placeholder="أدخل كلمة المرور" required>
+                  <span asp-validation-for="Password" class="text-danger small mt-1 d-block"></span>
+                </div>
+                <div class="col-md-6 form-group-custom mb-0">
+                  <label asp-for="ConfirmPassword" class="form-label-custom">تأكيد كلمة المرور</label>
+                  <input asp-for="ConfirmPassword" type="password" class="form-control-custom" placeholder="أعد إدخال كلمة المرور" required>
+                  <span asp-validation-for="ConfirmPassword" class="text-danger small mt-1 d-block"></span>
+                </div>
+                
+                <div class="col-12 mt-3">
+                  <div class="form-check mb-4">
+                    <input class="form-check-input" type="checkbox" id="terms" required>
+                    <label class="form-check-label terms-label" for="terms">
+                      أوافق على <a href="#" class="text-primary-custom fw-bold">الشروط والأحكام</a> و <a href="#" class="text-primary-custom fw-bold">سياسة الخصوصية</a>
+                    </label>
+                  </div>
+                </div>
+
+                <div class="col-12">
+                  <button type="submit" class="btn-accent w-100 justify-content-center btn-auth-submit">
+                    إنشاء حساب <i class="bi bi-person-check"></i>
+                  </button>
+                </div>
+              </div>
+            </form>
+            
+            <div class="divider">أو التسجيل بواسطة</div>
+            
+            <div class="social-login">
+              <button class="btn-social" type="button">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/5/53/Google_%22G%22_Logo.svg" alt="Google" width="18">
+                جوجل
+              </button>
+              <button class="btn-social" type="button">
+                <i class="bi bi-facebook facebook-icon"></i>
+                فيسبوك
+              </button>
+            </div>
+            
+            <p class="text-center mt-4 mb-0 auth-footer-text">
+              لديك حساب بالفعل؟ <a asp-controller="Auth" asp-action="Login" class="text-primary-custom fw-bold">تسجيل الدخول</a>
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

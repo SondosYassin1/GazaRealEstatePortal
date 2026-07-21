@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>@ViewData["Title"] - بوابة غزة للعقارات</title>
+  <meta name="description"
+    content="بوابة غزة للعقارات - منصتك المتكاملة للبحث عن العقارات في غزة. شقق، منازل، أراضي للبيع والإيجار.">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+  <link rel="stylesheet" href="~/css/main.css" asp-append-version="true">
+</head>
+
+<body>
+  <nav class="main-navbar d-flex align-items-center justify-content-between px-3 py-2">
+    <a asp-controller="Home" asp-action="Index" class="navbar-brand text-decoration-none">
+      <div class="brand-icon"><i class="bi bi-buildings text-white fs-5"></i></div>
+      <span>بوابة <span class="brand-accent">غزة</span> للعقارات</span>
+    </a>
+    
+    <div class="d-none d-lg-flex align-items-center gap-1">
+      <a asp-controller="Home" asp-action="Index" class="nav-link-custom">الرئيسية</a>
+      <a href="/Home/Index#about" class="nav-link-custom">عن المنصة</a>
+      <a asp-controller="Home" asp-action="Properties" class="nav-link-custom">العقارات</a>
+      <a href="/Home/Index#features" class="nav-link-custom">المميزات</a>
+      <a href="#contact" class="nav-link-custom">تواصل معنا</a>
+    </div>
+    
+    <div class="d-flex align-items-center gap-2">
+        @if (User.Identity?.IsAuthenticated == true)
+        {
+            <form asp-controller="Auth" asp-action="Logout" method="post" class="d-none d-lg-inline-block m-0 p-0">
+                <button type="submit" class="btn-outline-primary-custom btn btn-sm">تسجيل خروج</button>
+            </form>
+            @if (User.IsInRole("Admin"))
+            {
+                <a asp-controller="Admin" asp-action="Dashboard" class="btn-accent btn btn-sm d-none d-lg-inline-block">لوحة الإدارة</a>
+            }
+            else
+            {
+                <a asp-controller="Properties" asp-action="Dashboard" class="btn-accent btn btn-sm d-none d-lg-inline-block">لوحة التحكم</a>
+            }
+        }
+        else
+        {
+            <a asp-controller="Auth" asp-action="Login" class="btn-outline-primary-custom btn btn-sm d-none d-lg-inline-block">تسجيل الدخول</a>
+            <a asp-controller="Auth" asp-action="Register" class="btn-accent btn btn-sm d-none d-lg-inline-block">إنشاء حساب</a>
+        }
+      
+      <button class="btn d-lg-none p-1" id="mobileMenuBtn" data-bs-toggle="collapse" data-bs-target="#mobileMenu" aria-expanded="false" aria-controls="mobileMenu">
+        <i class="bi bi-list fs-3 text-primary"></i>
+      </button>
+    </div>
+  </nav>
+
+  <div class="mobile-menu-custom collapse d-lg-none bg-white p-3 shadow-sm" id="mobileMenu">
+    <a asp-controller="Home" asp-action="Index" class="nav-link-custom d-block mb-2">الرئيسية</a>
+    <a asp-controller="Home" asp-action="Properties" class="nav-link-custom d-block mb-2">العقارات</a>
+    <a href="/Home/Index#features" class="nav-link-custom d-block mb-2">المميزات</a>
+    <a href="/Home/Index#about" class="nav-link-custom d-block mb-2">عن المنصة</a>
+    <hr class="text-muted my-2">
+    @if (User.Identity?.IsAuthenticated == true)
+    {
+        <form asp-controller="Auth" asp-action="Logout" method="post" class="m-0 p-0 mb-2">
+            <button type="submit" class="btn-outline-primary-custom btn btn-sm w-100 text-center">تسجيل خروج</button>
+        </form>
+        @if (User.IsInRole("Admin"))
+        {
+            <a asp-controller="Admin" asp-action="Dashboard" class="btn-accent btn btn-sm w-100 text-center">لوحة الإدارة</a>
+        }
+        else
+        {
+            <a asp-controller="Properties" asp-action="Dashboard" class="btn-accent btn btn-sm w-100 text-center">لوحة التحكم</a>
+        }
+    }
+    else
+    {
+        <a asp-controller="Auth" asp-action="Login" class="btn-outline-primary-custom btn btn-sm w-100 mb-2 text-center">تسجيل الدخول</a>
+        <a asp-controller="Auth" asp-action="Register" class="btn-accent btn btn-sm w-100 text-center">إنشاء حساب</a>
+    }
+  </div>
+
+  @RenderBody()
+
+  <!-- FOOTER -->
+  <footer class="footer" id="contact">
+    <div class="container">
+      <div class="row g-4">
+        <div class="col-lg-4">
+          <div class="footer-brand mb-3"><i class="bi bi-buildings me-2"></i>بوابة غزة للعقارات</div>
+          <p class="text-14 lh-18">منصة عقارية متكاملة تربط بين أصحاب العقارات والباحثين عنها في قطاع غزة بشكل مباشر وشفاف.</p>
+          <div class="d-flex gap-3 mt-3">
+            <a href="#" class="social-icon-box text-decoration-none"><i class="bi bi-facebook"></i></a>
+            <a href="#" class="social-icon-box text-decoration-none"><i class="bi bi-instagram"></i></a>
+            <a href="#" class="social-icon-box text-decoration-none"><i class="bi bi-whatsapp"></i></a>
+          </div>
+        </div>
+        <div class="col-lg-2 col-6">
+          <h6>روابط سريعة</h6>
+          <a asp-controller="Home" asp-action="Index">الرئيسية</a>
+          <a asp-controller="Home" asp-action="Properties">العقارات</a>
+          <a asp-controller="Properties" asp-action="AddProperty">إضافة عقار</a>
+          <a asp-controller="Auth" asp-action="Login">تسجيل الدخول</a>
+          <a asp-controller="Auth" asp-action="Register">إنشاء حساب</a>
+        </div>
+        <div class="col-lg-2 col-6">
+          <h6>أنواع العقارات</h6>
+          <a href="/Home/Properties?PropertyType=Apartment">شقق</a>
+          <a href="/Home/Properties?PropertyType=House">منازل</a>
+          <a href="/Home/Properties?PropertyType=Land">أراضي</a>
+          <a href="/Home/Properties?PropertyType=Store">محلات</a>
+          <a href="/Home/Properties?PropertyType=Villa">فيلات</a>
+        </div>
+        <div class="col-lg-4">
+          <h6>تواصل معنا</h6>
+          <div class="text-14 lh-22">
+            <div><i class="bi bi-geo-alt me-2 text-accent"></i>غزة، فلسطين</div>
+            <div><i class="bi bi-telephone me-2 text-accent"></i>+970 59 XXX XXXX</div>
+            <div><i class="bi bi-envelope me-2 text-accent"></i>info@gazarealestate.ps</div>
+            <div><i class="bi bi-whatsapp me-2 text-accent"></i>+970 59 XXX XXXX</div>
+          </div>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>© 2024 بوابة غزة للعقارات. جميع الحقوق محفوظة.</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- WhatsApp Float -->
+  <a href="https://wa.me/97059XXXXXXX" class="whatsapp-float" target="_blank" title="تواصل عبر واتساب">
+    <i class="bi bi-whatsapp"></i>
+  </a>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="~/js/main.js" asp-append-version="true"></script>
+  @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

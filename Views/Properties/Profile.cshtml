@@ -1,0 +1,108 @@
+@model GazaRealEstatePortal.ViewModels.ProfileViewModel
+@{
+    ViewData["Title"] = "الملف الشخصي";
+    Layout = "~/Views/Shared/_UserDashboardLayout.cshtml";
+}
+
+<div class="dashboard-header flex-wrap gap-3">
+  <div>
+    <h1>الملف الشخصي</h1>
+    <p>إدارة معلوماتك الشخصية وإعدادات الحساب.</p>
+  </div>
+</div>
+
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success">@TempData["SuccessMessage"]</div>
+}
+@if (TempData["ErrorMessage"] != null)
+{
+    <div class="alert alert-danger">@TempData["ErrorMessage"]</div>
+}
+
+<!-- Profile Hero -->
+<div class="profile-hero mb-4">
+  <div class="profile-hero-inner">
+    <div class="d-flex flex-column flex-md-row align-items-center align-items-md-start gap-4">
+      <div class="profile-avatar-wrap">
+        <img src="https://ui-avatars.com/api/?name=@Uri.EscapeDataString(Model.FullName)&background=F5A623&color=fff&size=220" alt="@Model.FullName" id="profileAvatarImg">
+      </div>
+      <div class="text-center text-md-start flex-grow-1">
+        <div class="d-flex flex-wrap align-items-center justify-content-center justify-content-md-start gap-2 mb-2">
+          <h2 class="fw-bold mb-0 fs-3" id="displayFullName">@Model.FullName</h2>
+          <span class="profile-verified"><i class="bi bi-patch-check-fill"></i> مستخدم مسجل</span>
+        </div>
+        <div class="profile-meta mt-3">
+          <span><i class="bi bi-envelope"></i> <span id="displayEmail">@Model.Email</span></span>
+          @if(!string.IsNullOrEmpty(Model.PhoneNumber)){
+            <span><i class="bi bi-telephone"></i> <span dir="ltr" id="displayPhone">@Model.PhoneNumber</span></span>
+          }
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="row g-4">
+  <!-- Account Settings Column -->
+  <div class="col-lg-6">
+    <div class="card-custom p-4 h-100">
+      <h4 class="fw-bold text-primary-custom mb-1 section-header-custom">إعدادات الحساب</h4>
+      <p class="text-muted small mb-4">تحديث بياناتك الشخصية</p>
+
+      <div class="settings-tab-nav">
+        <button type="button" class="settings-tab-btn active" data-tab="personal">المعلومات الشخصية</button>
+      </div>
+
+      <!-- Personal Info Tab -->
+      <div class="tab-panel active" id="tab-personal">
+        <form asp-action="Profile" method="post">
+          <div asp-validation-summary="ModelOnly" class="text-danger mb-3 font-cairo fw-bold"></div>
+          
+          <div class="form-group-custom">
+            <label asp-for="FullName" class="form-label-custom">الاسم الكامل</label>
+            <input asp-for="FullName" class="form-control-custom" required>
+            <span asp-validation-for="FullName" class="text-danger small mt-1 d-block"></span>
+          </div>
+          <div class="form-group-custom">
+            <label asp-for="Email" class="form-label-custom">البريد الإلكتروني</label>
+            <input asp-for="Email" class="form-control-custom" readonly>
+            <span class="form-text text-muted small">لا يمكن تغيير البريد الإلكتروني.</span>
+          </div>
+          <div class="form-group-custom">
+            <label asp-for="PhoneNumber" class="form-label-custom">رقم الهاتف</label>
+            <input asp-for="PhoneNumber" class="form-control-custom" dir="ltr">
+            <span asp-validation-for="PhoneNumber" class="text-danger small mt-1 d-block"></span>
+          </div>
+          <button type="submit" class="btn-primary-custom w-100 justify-content-center">
+            <i class="bi bi-check-lg"></i> حفظ المعلومات
+          </button>
+        </form>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Quick Info Card -->
+  <div class="col-lg-6">
+    <div class="card-custom p-4 h-100">
+      <h5 class="fw-bold text-primary-custom mb-4"><i class="bi bi-info-circle me-2"></i>معلومات الحساب</h5>
+      <div class="info-row">
+        <span class="label">نوع الحساب</span>
+        <span class="value"><span class="badge-custom badge-primary-soft">مستخدم مسجل</span></span>
+      </div>
+      <div class="info-row">
+        <span class="label">تاريخ التسجيل</span>
+        <span class="value">مسجل في النظام</span>
+      </div>
+      <div class="info-row">
+        <span class="label">حالة الحساب</span>
+        <span class="value"><span class="badge-custom badge-success">نشط</span></span>
+      </div>
+    </div>
+  </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
