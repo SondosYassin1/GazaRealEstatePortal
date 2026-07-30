@@ -1,0 +1,275 @@
+@{
+    ViewData["Title"] = "الرئيسية";
+    Layout = "~/Views/Shared/_PublicLayout.cshtml";
+}
+@model GazaRealEstatePortal.ViewModels.HomeIndexViewModel
+@using GazaRealEstatePortal.Models.Enums
+@using GazaRealEstatePortal.Helpers
+
+  <!-- HERO -->
+  <section class="hero-section">
+    <div class="container">
+      <div class="row align-items-center g-4">
+        <div class="col-lg-6 hero-content">
+          <div class="d-flex align-items-center gap-2 mb-3">
+            <span class="hero-badge">🏠 المنصة العقارية الأولى في غزة</span>
+          </div>
+          <h1>ابحث عن <span>عقارك المثالي</span> في غزة</h1>
+          <p>منصة متكاملة تجمع بين أصحاب العقارات والباحثين عنها بشكل مباشر وشفاف</p>
+          <div class="hero-stats">
+            <div class="hero-stat">
+              <div class="stat-number">+@Model.ApprovedPropertiesCount</div>
+              <div class="stat-text">عقار متاح</div>
+            </div>
+            <div class="hero-stat">
+              <div class="stat-number">+@Model.ActiveUsersCount</div>
+              <div class="lbl">مستخدم نشط</div>
+            </div>
+            <div class="hero-stat">
+              <div class="num">+300</div>
+              <div class="lbl">صفقة ناجحة</div>
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-6">
+          <div class="hero-search-box">
+            <form class="hero-search-form" id="heroSearchForm" asp-controller="Home" asp-action="Properties" method="get">
+              <div class="search-tabs d-flex gap-2 mb-4">
+                <input type="radio" class="d-none" name="OperationType" id="op_all" value="" checked>
+                <label class="tab-btn active" for="op_all">الكل</label>
+                
+                <input type="radio" class="d-none" name="OperationType" id="op_sale" value="Sale">
+                <label class="tab-btn" for="op_sale">للبيع</label>
+                
+                <input type="radio" class="d-none" name="OperationType" id="op_rent" value="Rent">
+                <label class="tab-btn" for="op_rent">للإيجار</label>
+              </div>
+              <div class="row g-3">
+                <div class="col-12">
+                  <input type="text" class="form-control" id="heroSearchInput" name="Keyword"
+                    placeholder="ابحث بالكلمات المفتاحية (مثال: الرمال، شقة، للبيع)...">
+                </div>
+                <div class="col-12">
+                  <select name="PropertyType" class="form-select" id="propTypeSelect" asp-items="GazaRealEstatePortal.Helpers.EnumHelper.GetLocalizedEnumSelectList<PropertyType>()">
+                    <option value="">نوع العقار</option>
+                  </select>
+                </div>
+                <div class="col-6">
+                  <select name="Governorate" class="form-select">
+                    <option value="">المحافظة</option>
+                    <option value="الشمال">الشمال</option>
+                    <option value="غزة">غزة</option>
+                    <option value="الوسطى">الوسطى</option>
+                    <option value="خانيونس">خانيونس</option>
+                    <option value="رفح">رفح</option>
+                  </select>
+                </div>
+                <div class="col-6">
+                  <input type="number" name="PriceMax" class="form-control" placeholder="السعر الأقصى ₪">
+                </div>
+                <div class="col-12">
+                  <button type="submit" class="btn-accent w-100 justify-content-center btn-search-hero">
+                    <i class="bi bi-search"></i> بحث عن العقارات
+                  </button>
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ABOUT -->
+  <section id="about" class="py-5">
+    <div class="container">
+      <div class="row align-items-center g-5">
+        
+        <div class="col-lg-6">
+          <h2 class="section-title mb-3">عن <span>بوابة غزة للعقارات</span></h2>
+          <div class="section-divider mb-4"></div>
+          
+          <p class="text-secondary lh-lg mb-4">
+            تأسست "بوابة غزة للعقارات" لتكون المنصة الرقمية الموثوقة الأولى والوجهة الأساسية لكل من يبحث عن عقار أو يرغب في عرض عقاره للبيع أو الإيجار. 
+          </p>
+          <p class="text-secondary lh-lg mb-4">
+            هدفنا الأساسي هو تنظيم السوق العقاري المحلي وتسهيل عملية البحث على المواطنين من خلال توفير قاعدة بيانات متجددة، تتيح للمستخدمين التواصل المباشر مع أصحاب العقارات بكل شفافية وبدون أي عمولات أو وسيط.
+          </p>
+          
+          <div class="row g-3">
+            <div class="col-sm-6 d-flex align-items-center gap-2">
+              <i class="bi bi-check-circle-fill text-primary"></i>
+              <span class="fw-bold text-dark text-14">دعم كامل للمنتج المحلي</span>
+            </div>
+            <div class="col-sm-6 d-flex align-items-center gap-2">
+              <i class="bi bi-check-circle-fill text-primary"></i>
+              <span class="fw-bold text-dark text-14">بدون رسوم أو عمولات مخفية</span>
+            </div>
+            <div class="col-sm-6 d-flex align-items-center gap-2">
+              <i class="bi bi-check-circle-fill text-primary"></i>
+              <span class="fw-bold text-dark text-14">تحديثات يومية ومستمرة</span>
+            </div>
+            <div class="col-sm-6 d-flex align-items-center gap-2">
+              <i class="bi bi-check-circle-fill text-primary"></i>
+              <span class="fw-bold text-dark text-14">واجهات سهلة الاستخدام</span>
+            </div>
+          </div>
+        </div>
+        
+        <div class="col-lg-6 text-center">
+          <div class="position-relative">
+            <img src="https://images.unsplash.com/photo-1560518883-ce09059eeffa?auto=format&fit=crop&w=600&q=80" alt="عن بوابة غزة للعقارات" class="img-fluid rounded-4 shadow">
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- FEATURED PROPERTIES -->
+  <section class="py-5">
+    <div class="container">
+      <div class="d-flex justify-content-between align-items-start mb-4">
+        <div>
+          <h2 class="section-title">أحدث <span>العقارات</span></h2>
+          <div class="section-divider"></div>
+        </div>
+        <a asp-controller="Home" asp-action="Properties" class="view-all-link mt-2">عرض الكل <i class="bi bi-arrow-left"></i></a>
+      </div>
+      <div class="row g-4">
+        @if (!Model.FeaturedProperties.Any())
+        {
+            <div class="col-12 text-center text-muted">لا يوجد عقارات معتمدة حالياً.</div>
+        }
+        else
+        {
+            @foreach (var property in Model.FeaturedProperties)
+            {
+                <div class="col-md-6 col-lg-4">
+                  <div class="property-card">
+                    <div class="card-img-wrapper">
+                      <span class="badge-status @(property.OperationType == OperationType.Sale ? "badge-for-sale" : "badge-for-rent")">
+                          @property.OperationType.ToArabicText()
+                      </span>
+                      <img src="@property.MainImageUrl" alt="@property.Title">
+                    </div>
+                    <div class="card-body">
+                      <div class="price">@property.Price ₪</div>
+                      <h5 class="mt-2 text-primary-custom fs-6">@property.Title</h5>
+                      <div class="location"><i class="bi bi-geo-alt me-1"></i> @property.Governorate - @property.CityAreaCamp</div>
+                      <div class="features">
+                        <span><i class="bi bi-tag text-accent"></i> @property.PropertyType.ToArabicText()</span>
+                      </div>
+                      <a asp-controller="Home" asp-action="PropertyDetails" asp-route-id="@property.Id" class="btn btn-outline-primary-custom w-100 mt-3 font-cairo fw-600">عرض التفاصيل</a>
+                    </div>
+                  </div>
+                </div>
+            }
+        }
+      </div>
+    </div>
+  </section>
+
+  <!-- FEATURES -->
+  <section id="features" class="py-5 bg-white">
+    <div class="container">
+      <div class="text-center mb-5">
+        <h2 class="section-title">لماذا <span>بوابة غزة</span>؟</h2>
+        <div class="section-divider mx-auto"></div>
+        <p class="section-subtitle">نوفر لك تجربة عقارية متكاملة وموثوقة</p>
+      </div>
+      <div class="row g-4">
+        <div class="col-md-6 col-lg-3">
+          <div class="feature-card">
+            <div class="feature-icon"><i class="bi bi-shield-check"></i></div>
+            <h5>موثوقية عالية</h5>
+            <p>جميع العقارات موثقة ومراجعة من قِبل فريقنا لضمان الشفافية</p>
+          </div>
+        </div>
+        <div class="col-md-6 col-lg-3">
+          <div class="feature-card">
+            <div class="feature-icon"><i class="bi bi-chat-dots"></i></div>
+            <h5>تواصل مباشر</h5>
+            <p>تواصل مع أصحاب العقارات مباشرة عبر الهاتف أو واتساب</p>
+          </div>
+        </div>
+        <div class="col-md-6 col-lg-3">
+          <div class="feature-card">
+            <div class="feature-icon"><i class="bi bi-search"></i></div>
+            <h5>بحث متقدم</h5>
+            <p>فلاتر بحث متعددة تساعدك في إيجاد العقار المناسب بسرعة</p>
+          </div>
+        </div>
+        <div class="col-md-6 col-lg-3">
+          <div class="feature-card">
+            <div class="feature-icon"><i class="bi bi-graph-up"></i></div>
+            <h5>لوحة تحكم ذكية</h5>
+            <p>إدارة إعلاناتك وتتبع الاهتمام بعقاراتك بكل سهولة</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PROPERTY TYPES -->
+  <section class="py-5">
+    <div class="container">
+      <div class="text-center mb-5">
+        <h2 class="section-title">تصفح <span>حسب النوع</span></h2>
+        <div class="section-divider mx-auto"></div>
+      </div>
+      <div class="row g-3">
+        <div class="col-6 col-md-4 col-lg-2">
+          <a href="/Home/Properties?PropertyType=Apartment" class="d-block text-center p-3 rounded-3 text-decoration-none type-card">
+            <i class="bi bi-building fs-2 d-block mb-2 text-primary"></i>
+            <span class="fw-bold text-14 text-primary">شقة</span>
+          </a>
+        </div>
+        <div class="col-6 col-md-4 col-lg-2">
+          <a href="/Home/Properties?PropertyType=House" class="d-block text-center p-3 rounded-3 text-decoration-none type-card">
+            <i class="bi bi-house fs-2 d-block mb-2 text-primary"></i>
+            <span class="fw-bold text-14 text-primary">منزل</span>
+          </a>
+        </div>
+        <div class="col-6 col-md-4 col-lg-2">
+          <a href="/Home/Properties?PropertyType=Land" class="d-block text-center p-3 rounded-3 text-decoration-none type-card">
+            <i class="bi bi-geo-alt fs-2 d-block mb-2 text-primary"></i>
+            <span class="fw-bold text-14 text-primary">أرض</span>
+          </a>
+        </div>
+        <div class="col-6 col-md-4 col-lg-2">
+          <a href="/Home/Properties?PropertyType=Store" class="d-block text-center p-3 rounded-3 text-decoration-none type-card">
+            <i class="bi bi-shop fs-2 d-block mb-2 text-primary"></i>
+            <span class="fw-bold text-14 text-primary">محل تجاري</span>
+          </a>
+        </div>
+        <div class="col-6 col-md-4 col-lg-2">
+          <a href="/Home/Properties?PropertyType=Villa" class="d-block text-center p-3 rounded-3 text-decoration-none type-card">
+            <i class="bi bi-houses fs-2 d-block mb-2 text-primary"></i>
+            <span class="fw-bold text-14 text-primary">فيلا</span>
+          </a>
+        </div>
+        <div class="col-6 col-md-4 col-lg-2">
+          <a href="/Home/Properties?PropertyType=Office" class="d-block text-center p-3 rounded-3 text-decoration-none type-card">
+            <i class="bi bi-briefcase fs-2 d-block mb-2 text-primary"></i>
+            <span class="fw-bold text-14 text-primary">مكتب</span>
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="py-5">
+    <div class="container">
+      <div class="cta-section">
+        <i class="bi bi-plus-circle-fill fs-1 mb-3 text-accent"></i>
+        <h2>هل تريد إضافة عقارك؟</h2>
+        <p>سجّل الآن وأضف عقارك مجاناً والوصل إلى آلاف الباحثين</p>
+        <div class="d-flex gap-3 justify-content-center flex-wrap">
+          <a asp-controller="Auth" asp-action="Register" class="btn-accent btn">إنشاء حساب </a>
+          <a asp-controller="Properties" asp-action="AddProperty" class="btn btn-outline-light font-cairo fw-600">إضافة عقار الآن</a>
+        </div>
+      </div>
+    </div>
+  </section>

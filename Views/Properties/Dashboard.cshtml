@@ -1,0 +1,141 @@
+@using GazaRealEstatePortal.Models.Enums
+@using GazaRealEstatePortal.Helpers
+@model GazaRealEstatePortal.ViewModels.UserDashboardViewModel
+@{
+    ViewData["Title"] = "لوحة التحكم";
+    Layout = "~/Views/Shared/_UserDashboardLayout.cshtml";
+    int totalCount = Model.PendingCount + Model.ApprovedCount + Model.RejectedCount;
+}
+
+<div class="dashboard-header">
+  <div>
+    <h1>مرحباً، @User.Identity?.Name 👋</h1>
+    <p>نظرة عامة على أداء عقاراتك على المنصة.</p>
+  </div>
+  <a asp-action="AddProperty" class="btn-accent"><i class="bi bi-plus-lg"></i> إضافة عقار جديد</a>
+</div>
+
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success">@TempData["SuccessMessage"]</div>
+}
+@if (TempData["ErrorMessage"] != null)
+{
+    <div class="alert alert-danger">@TempData["ErrorMessage"]</div>
+}
+
+<!-- STATS -->
+<div class="row g-4 mb-5">
+  <div class="col-md-6 col-lg-3">
+    <div class="stat-card">
+      <div class="stat-icon stat-icon-blue"><i class="bi bi-buildings"></i></div>
+      <div>
+        <div class="stat-value">@totalCount</div>
+        <div class="stat-label">إجمالي العقارات</div>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-6 col-lg-3">
+    <div class="stat-card">
+      <div class="stat-icon stat-icon-green"><i class="bi bi-check-circle"></i></div>
+      <div>
+        <div class="stat-value">@Model.ApprovedCount</div>
+        <div class="stat-label">عقارات معتمدة</div>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-6 col-lg-3">
+    <div class="stat-card">
+      <div class="stat-icon stat-icon-accent"><i class="bi bi-hourglass-split"></i></div>
+      <div>
+        <div class="stat-value">@Model.PendingCount</div>
+        <div class="stat-label">قيد المراجعة</div>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-6 col-lg-3">
+    <div class="stat-card">
+      <div class="stat-icon stat-icon-red"><i class="bi bi-x-circle"></i></div>
+      <div>
+        <div class="stat-value">@Model.RejectedCount</div>
+        <div class="stat-label">مرفوضة</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- PROPERTIES TABLE -->
+<div class="card-custom p-4">
+  <h4 class="mb-4 fw-bold text-primary">إدارة العقارات</h4>
+  
+  @if (!Model.LastProperties.Any())
+  {
+      <div class="alert alert-info">لم تقم بإضافة أي عقارات بعد.</div>
+  }
+  else
+  {
+      <div class="table-responsive">
+        <table id="userPropertiesTable" class="table-custom">
+          <thead>
+            <tr>
+              <th>العقار</th>
+              <th>النوع</th>
+              <th>الغرض</th>
+              <th>السعر</th>
+              <th>الحالة</th>
+              <th>الإجراءات</th>
+            </tr>
+          </thead>
+          <tbody>
+            @foreach (var property in Model.LastProperties)
+            {
+                <tr>
+                  <td>
+                    <div class="d-flex align-items-center gap-3">
+                      <img src="@property.MainImageUrl" alt="Prop" class="property-list-img">
+                      <div>
+                        <div class="fw-bold text-primary">@property.Title</div>
+                        <div class="text-muted small"><i class="bi bi-geo-alt"></i> @property.Governorate</div>
+                      </div>
+                    </div>
+                  </td>
+                  <td>@property.PropertyType.ToArabicText()</td>
+                  <td>
+                      <span class="badge-custom @(property.OperationType == OperationType.Sale ? "badge-primary-soft" : "badge-success")">
+                          @property.OperationType.ToArabicText()
+                      </span>
+                  </td>
+                  <td class="fw-bold text-dark">@property.Price ₪</td>
+                  <td>
+                      @if(property.Status == PropertyStatus.Pending)
+                      {
+                          <span class="badge-custom badge-warning"><i class="bi bi-hourglass"></i> قيد المراجعة</span>
+                      }
+                      else if(property.Status == PropertyStatus.Approved)
+                      {
+                          <span class="badge-custom badge-success"><i class="bi bi-check"></i> معتمد</span>
+                      }
+                      else
+                      {
+                          <span class="badge-custom badge-danger"><i class="bi bi-x"></i> مرفوض</span>
+                      }
+                  </td>
+                  <td>
+                    <div class="d-flex gap-2">
+                      <a asp-controller="Home" asp-action="PropertyDetails" asp-route-id="@property.Id" class="action-btn action-btn-view" title="عرض"><i class="bi bi-eye"></i></a>
+                      @if (property.Status != PropertyStatus.Rejected)
+                      {
+                          <a asp-action="EditProperty" asp-route-id="@property.Id" class="action-btn action-btn-edit" title="تعديل"><i class="bi bi-pencil"></i></a>
+                      }
+                      <form asp-action="DeleteProperty" asp-route-id="@property.Id" method="post" class="d-inline m-0 p-0" onsubmit="return confirm('هل أنت متأكد من الحذف؟');">
+                        <button type="submit" class="action-btn action-btn-delete border-0" title="حذف"><i class="bi bi-trash"></i></button>
+                      </form>
+                    </div>
+                  </td>
+                </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+  }
+</div>

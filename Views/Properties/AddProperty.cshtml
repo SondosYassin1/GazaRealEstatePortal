@@ -1,0 +1,171 @@
+@using GazaRealEstatePortal.Models.Enums
+@model GazaRealEstatePortal.ViewModels.PropertyFormViewModel
+@{
+    ViewData["Title"] = "إضافة عقار جديد";
+    Layout = "~/Views/Shared/_UserDashboardLayout.cshtml";
+}
+
+<div class="dashboard-header">
+  <div>
+    <h1>إضافة عقار جديد</h1>
+    <p>قم بتعبئة تفاصيل العقار لنشره على المنصة. سيتم مراجعة طلبك من قبل الإدارة.</p>
+  </div>
+</div>
+
+<div class="card-custom p-4">
+  <form asp-action="AddProperty" method="post" enctype="multipart/form-data">
+    <div asp-validation-summary="All" class="text-danger mb-3 font-cairo fw-bold"></div>
+    
+    <h5 class="mb-4 text-primary-custom fw-bolder border-bottom border-secondary-subtle pb-2">المعلومات الأساسية</h5>
+    
+    <div class="row g-3 mb-4">
+      <div class="col-md-8">
+        <label asp-for="Title" class="form-label-custom">عنوان العقار</label>
+        <input asp-for="Title" class="form-control-custom" placeholder="مثال: شقة فاخرة للبيع في الرمال" required>
+        <span asp-validation-for="Title" class="text-danger small mt-1 d-block"></span>
+      </div>
+      <div class="col-md-4">
+        <label asp-for="Price" class="form-label-custom">السعر (شيكل)</label>
+        <input asp-for="Price" type="number" step="0.01" class="form-control-custom" placeholder="السعر" required>
+        <span asp-validation-for="Price" class="text-danger small mt-1 d-block"></span>
+      </div>
+      <div class="col-md-6">
+        <label asp-for="OperationType" class="form-label-custom">نوع العملية <span class="text-danger">*</span></label>
+        <select asp-for="OperationType" class="form-select-custom" asp-items="GazaRealEstatePortal.Helpers.EnumHelper.GetLocalizedEnumSelectList<OperationType>()">
+          <option value="">اختر نوع العملية</option>
+        </select>
+        <span asp-validation-for="OperationType" class="text-danger small mt-1 d-block"></span>
+      </div>
+      <div class="col-md-6">
+        <label asp-for="PropertyType" class="form-label-custom">نوع العقار <span class="text-danger">*</span></label>
+        <select asp-for="PropertyType" class="form-select-custom" asp-items="GazaRealEstatePortal.Helpers.EnumHelper.GetLocalizedEnumSelectList<PropertyType>()">
+          <option value="">اختر نوع العقار</option>
+        </select>
+        <span asp-validation-for="PropertyType" class="text-danger small mt-1 d-block"></span>
+      </div>
+    </div>
+
+    <h5 class="mb-4 text-primary-custom fw-bolder border-bottom border-secondary-subtle pb-2">الموقع</h5>
+    
+    <div class="row g-3 mb-4">
+      <div class="col-md-4">
+        <label asp-for="Governorate" class="form-label-custom">المحافظة</label>
+        <select asp-for="Governorate" class="form-control-custom form-select-custom" required>
+          <option value="">اختر المحافظة...</option>
+          <option value="الشمال">الشمال</option>
+          <option value="غزة">غزة</option>
+          <option value="الوسطى">الوسطى</option>
+          <option value="خانيونس">خانيونس</option>
+          <option value="رفح">رفح</option>
+        </select>
+        <span asp-validation-for="Governorate" class="text-danger small mt-1 d-block"></span>
+      </div>
+      <div class="col-md-4">
+        <label asp-for="CityAreaCamp" class="form-label-custom">المدينة / المنطقة</label>
+        <input asp-for="CityAreaCamp" class="form-control-custom" placeholder="مثال: الرمال، جباليا، النصيرات..." required>
+        <span asp-validation-for="CityAreaCamp" class="text-danger small mt-1 d-block"></span>
+      </div>
+      <div class="col-md-4">
+        <label asp-for="DetailedAddress" class="form-label-custom">العنوان التفصيلي</label>
+        <input asp-for="DetailedAddress" class="form-control-custom" placeholder="الشارع، المعلم القريب..." required>
+        <span asp-validation-for="DetailedAddress" class="text-danger small mt-1 d-block"></span>
+      </div>
+    </div>
+
+    <h5 class="mb-4 text-primary-custom fw-bolder border-bottom border-secondary-subtle pb-2">التفاصيل والمواصفات</h5>
+    
+    <div class="row g-3 mb-4">
+      <div class="col-md-3">
+        <label asp-for="Area" class="form-label-custom">المساحة (م²)</label>
+        <input asp-for="Area" type="number" step="0.01" class="form-control-custom" placeholder="المساحة">
+        <span asp-validation-for="Area" class="text-danger small mt-1 d-block"></span>
+      </div>
+      <div class="col-md-3">
+        <label asp-for="Rooms" class="form-label-custom">عدد الغرف</label>
+        <input asp-for="Rooms" type="number" class="form-control-custom" placeholder="عدد الغرف">
+        <span asp-validation-for="Rooms" class="text-danger small mt-1 d-block"></span>
+      </div>
+      <div class="col-md-3">
+        <label asp-for="Bathrooms" class="form-label-custom">عدد الحمامات</label>
+        <input asp-for="Bathrooms" type="number" class="form-control-custom" placeholder="الحمامات">
+        <span asp-validation-for="Bathrooms" class="text-danger small mt-1 d-block"></span>
+      </div>
+      <div class="col-md-3">
+        <label asp-for="Floor" class="form-label-custom">الطابق</label>
+        <input asp-for="Floor" type="text" class="form-control-custom" placeholder="مثال: أرضي، الأول...">
+        <span asp-validation-for="Floor" class="text-danger small mt-1 d-block"></span>
+      </div>
+      
+      <div class="col-12 mt-4">
+        <label class="form-label-custom">الميزات الإضافية</label>
+        <div class="d-flex flex-wrap gap-3 mt-2">
+            @{
+                var featuresList = new[] { "مصعد كهربائي", "موقف سيارات", "مولد كهرباء", "بئر مياه", "تكييف مركزي", "حراسة 24/7" };
+                foreach(var feature in featuresList)
+                {
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" name="SelectedFeatures" value="@feature" id="feature_@feature.Replace(" ", "_")">
+                        <label class="form-check-label" for="feature_@feature.Replace(" ", "_")">
+                            @feature
+                        </label>
+                    </div>
+                }
+            }
+        </div>
+      </div>
+
+      <div class="col-12 mt-4">
+        <label asp-for="Description" class="form-label-custom">وصف مفصل للعقار</label>
+        <textarea asp-for="Description" class="form-control-custom" rows="4" placeholder="اكتب تفاصيل وميزات العقار هنا..." required></textarea>
+        <span asp-validation-for="Description" class="text-danger small mt-1 d-block"></span>
+      </div>
+    </div>
+
+    <h5 class="mb-4 text-primary-custom fw-bolder border-bottom border-secondary-subtle pb-2">بيانات التواصل</h5>
+    <div class="row g-3 mb-4">
+      <div class="col-md-6">
+        <label asp-for="ContactPhone" class="form-label-custom">رقم الهاتف للتواصل</label>
+        <input asp-for="ContactPhone" class="form-control-custom" placeholder="مثال: 0593617699" maxlength="10" required>
+        <span asp-validation-for="ContactPhone" class="text-danger small mt-1 d-block"></span>
+      </div>
+      <div class="col-md-6">
+        <label asp-for="WhatsAppNumber" class="form-label-custom">رقم الواتساب</label>
+        <input asp-for="WhatsAppNumber" class="form-control-custom" placeholder="مثال: 00970593617699" maxlength="14">
+        <span asp-validation-for="WhatsAppNumber" class="text-danger small mt-1 d-block"></span>
+      </div>
+    </div>
+
+    <h5 class="mb-4 text-primary-custom fw-bolder border-bottom border-secondary-subtle pb-2">صور العقار</h5>
+    <div class="mb-4">
+      <label class="form-label-custom text-danger fw-bold">ملاحظة هامة: يجب رفع من 3 إلى 5 صور كحد أقصى.</label>
+      <div id="uploadZone" class="upload-zone p-5 text-center border rounded-3 bg-light" style="cursor: pointer;">
+        <div class="upload-icon display-4 text-secondary mb-3"><i class="bi bi-cloud-arrow-up"></i></div>
+        <p class="mb-0 fw-bold">اضغط هنا لرفع الصور</p>
+        <small class="text-muted">الحد المسموح 3-5 صور (JPG, PNG)</small>
+      </div>
+      <input asp-for="Images" type="file" id="propertyImages" accept=".jpg,.jpeg,.png" multiple class="d-none" required>
+      <span asp-validation-for="Images" class="text-danger small mt-1 d-block"></span>
+      <div id="imageError" class="text-danger mt-2 fw-bold d-none">يجب اختيار من 3 إلى 5 صور للعقار للمتابعة.</div>
+      <div id="imagePreview" class="d-flex gap-2 mt-3 flex-wrap"></div>
+    </div>
+
+    <div class="d-flex gap-3 pt-3 mt-4 border-top border-secondary-subtle">
+      <button type="submit" class="btn-accent px-5 py-2 w-auto d-inline-flex justify-content-center align-items-center">
+        نشر العقار <i class="bi bi-send ms-2"></i>
+      </button>
+      <a asp-action="Dashboard" class="btn btn-outline-secondary px-5 py-2 fw-bold">
+        إلغاء
+      </a>
+    </div>
+
+  </form>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        document.getElementById('uploadZone').addEventListener('click', function() {
+            document.getElementById('propertyImages').click();
+        });
+    </script>
+}

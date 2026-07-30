@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>@ViewData["Title"] - لوحة الإدارة</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+<link rel="stylesheet" href="~/css/main.css" asp-append-version="true">
+</head>
+<body>
+
+<div class="dashboard-layout">
+  
+  <!-- SIDEBAR -->
+  <aside class="sidebar bg-primary-dark">
+    <div class="sidebar-logo">
+      <div class="logo-icon bg-danger"><i class="bi bi-shield-lock"></i></div>
+      <div class="logo-text">
+        لوحة الإدارة
+        <small>بوابة غزة</small>
+      </div>
+    </div>
+    
+    <div class="sidebar-nav">
+      <div class="nav-section-title">النظام</div>
+      <a asp-controller="Home" asp-action="Index" class="sidebar-link">
+        <i class="bi bi-house"></i> الصفحة الرئيسية
+      </a>
+      <a asp-controller="Admin" asp-action="Dashboard" class="sidebar-link @(ViewContext.RouteData.Values["Action"].ToString() == "Dashboard" ? "active" : "")">
+        <i class="bi bi-speedometer2"></i> نظرة عامة
+      </a>
+      <a asp-controller="Admin" asp-action="Properties" class="sidebar-link @(ViewContext.RouteData.Values["Action"].ToString() == "Properties" || ViewContext.RouteData.Values["Action"].ToString() == "PendingProperties" ? "active" : "")">
+        <i class="bi bi-buildings"></i> إدارة العقارات
+      </a>
+      <a asp-controller="Admin" asp-action="Users" class="sidebar-link @(ViewContext.RouteData.Values["Action"].ToString() == "Users" ? "active" : "")">
+        <i class="bi bi-people"></i> إدارة المستخدمين
+      </a>
+    </div>
+    
+    <div class="sidebar-footer">
+      <div class="sidebar-user mb-3">
+        <img src="https://ui-avatars.com/api/?name=Admin&background=dc3545&color=fff" alt="Admin">
+        <div class="user-info">
+          <div>@User.Identity?.Name</div>
+          <small>صلاحيات كاملة</small>
+        </div>
+      </div>
+      <form asp-controller="Auth" asp-action="Logout" method="post" class="d-inline">
+        <button type="submit" class="sidebar-link text-danger m-0 bg-danger bg-opacity-10 border-0 w-100 text-start w-100">
+          <i class="bi bi-box-arrow-right"></i> تسجيل الخروج
+        </button>
+      </form>
+    </div>
+  </aside>
+
+  <!-- MAIN CONTENT -->
+  <main class="dashboard-content">
+    <button id="sidebarToggleBtn" class="btn d-lg-none mb-3">
+      <i class="bi bi-list fs-3"></i>
+    </button>
+    
+    @RenderBody()
+
+  </main>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script src="~/js/main.js" asp-append-version="true"></script>
+@await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

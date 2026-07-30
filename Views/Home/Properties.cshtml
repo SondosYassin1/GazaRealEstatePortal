@@ -1,0 +1,108 @@
+@model GazaRealEstatePortal.ViewModels.PropertiesPageViewModel
+@using GazaRealEstatePortal.Models.Enums
+@using GazaRealEstatePortal.Helpers
+@{
+    ViewData["Title"] = "العقارات";
+    Layout = "~/Views/Shared/_PublicLayout.cshtml";
+}
+
+<!-- PAGE HEADER -->
+<header class="page-header">
+  <div class="container">
+    <h1>العقارات المتاحة</h1>
+    <p>تصفح أحدث العقارات المعروضة للبيع والإيجار في غزة</p>
+  </div>
+</header>
+
+<!-- PROPERTIES SECTION -->
+<section class="py-5">
+  <div class="container">
+    <!-- FILTER BAR -->
+    <div class="filter-bar">
+      <form id="filterForm" asp-controller="Home" asp-action="Properties" method="get" class="row g-3 align-items-end">
+        <div class="col-md-3">
+          <label asp-for="Filter.Keyword" class="form-label-custom">ابحث بكلمة مفتاحية</label>
+          <input asp-for="Filter.Keyword" type="text" class="form-control-custom" placeholder="مثال: الرمال، شقة، للبيع...">
+        </div>
+        <div class="col-md-2">
+          <label asp-for="Filter.PropertyType" class="form-label-custom">نوع العقار</label>
+          <select asp-for="Filter.PropertyType" class="form-select-custom form-control-custom" asp-items="GazaRealEstatePortal.Helpers.EnumHelper.GetLocalizedEnumSelectList<PropertyType>()">
+            <option value="">الكل</option>
+          </select>
+        </div>
+        <div class="col-md-2">
+          <label asp-for="Filter.OperationType" class="form-label-custom">الغرض</label>
+          <select asp-for="Filter.OperationType" class="form-select-custom form-control-custom" asp-items="GazaRealEstatePortal.Helpers.EnumHelper.GetLocalizedEnumSelectList<OperationType>()">
+            <option value="">الكل</option>
+          </select>
+        </div>
+        <div class="col-md-2">
+          <label asp-for="Filter.Governorate" class="form-label-custom">المحافظة</label>
+          <select asp-for="Filter.Governorate" class="form-select-custom form-control-custom">
+            <option value="">الكل</option>
+            <option value="الشمال">الشمال</option>
+            <option value="غزة">غزة</option>
+            <option value="الوسطى">الوسطى</option>
+            <option value="خانيونس">خانيونس</option>
+            <option value="رفح">رفح</option>
+          </select>
+        </div>
+        <div class="col-md-3 d-flex gap-2">
+          <button type="submit" class="btn-accent flex-grow-1 justify-content-center h-100 py-2">
+            <i class="bi bi-search"></i> تصفية
+          </button>
+          <a asp-controller="Home" asp-action="Properties" class="btn btn-outline-secondary flex-grow-1 justify-content-center h-100 py-2 font-cairo fw-600 align-items-center d-flex">
+            <i class="bi bi-x-circle me-1"></i> مسح
+          </a>
+        </div>
+      </form>
+    </div>
+
+    <!-- PROPERTIES GRID -->
+    <div class="row g-4" id="propertiesGrid">
+        @if (!Model.Results.Any())
+        {
+          <div class="col-12 text-center py-5">
+            <i class="bi bi-info-circle display-1 text-muted mb-3"></i>
+            <h4 class="text-muted fw-bold">عذراً، لم نجد أي عقار يطابق خيارات البحث الحالية.</h4>
+            <p class="text-secondary">يرجى تعديل الفلاتر أو مسح التصفية للمحاولة مجدداً.</p>
+          </div>
+        }
+        else
+        {
+            @foreach (var property in Model.Results)
+            {
+                <div class="col-md-6 col-lg-4">
+                  <div class="property-card">
+                    <div class="card-img-wrapper">
+                      <span class="badge-status @(property.OperationType == OperationType.Sale ? "badge-for-sale" : "badge-for-rent")">
+                          @property.OperationType.ToArabicText()
+                      </span>
+                      <img src="@property.MainImageUrl" alt="@property.Title">
+                    </div>
+                    <div class="card-body">
+                      <div class="price">@property.Price ₪</div>
+                      <h5 class="mt-2 text-primary-custom fs-6">@property.Title</h5>
+                      <div class="location"><i class="bi bi-geo-alt me-1"></i> @property.Governorate - @property.CityAreaCamp</div>
+                      <div class="features">
+                        <span><i class="bi bi-tag text-accent"></i> @property.PropertyType.ToArabicText()</span>
+                      </div>
+                      <a asp-controller="Home" asp-action="PropertyDetails" asp-route-id="@property.Id" class="btn btn-outline-primary-custom w-100 mt-3 font-cairo fw-600">عرض التفاصيل</a>
+                    </div>
+                  </div>
+                </div>
+            }
+        }
+    </div>
+
+    @if (Model.Results.Any())
+    {
+        <!-- PAGINATION -->
+        <div class="pagination-custom">
+          <button class="page-btn"><i class="bi bi-chevron-right"></i></button>
+          <button class="page-btn active">1</button>
+          <button class="page-btn"><i class="bi bi-chevron-left"></i></button>
+        </div>
+    }
+  </div>
+</section>

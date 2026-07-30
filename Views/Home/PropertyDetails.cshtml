@@ -1,0 +1,135 @@
+@model GazaRealEstatePortal.ViewModels.PropertyDetailsViewModel
+@using GazaRealEstatePortal.Models.Enums
+@using GazaRealEstatePortal.Helpers
+@{
+    ViewData["Title"] = Model.Title;
+    Layout = "~/Views/Shared/_PublicLayout.cshtml";
+    string defaultImg = "/images/default-property.jpg";
+    string mainImg = Model.ImageUrls.FirstOrDefault() ?? defaultImg;
+}
+
+<!-- PROPERTY DETAILS HEADER -->
+<div class="property-details-header">
+  <div class="container">
+    <div class="row align-items-center">
+      <div class="col-lg-8">
+        <div class="d-flex align-items-center gap-2 mb-2">
+          <span class="badge-custom badge-primary-soft">@Model.PropertyType.ToArabicText()</span>
+          <span class="badge-custom @(Model.OperationType == OperationType.Sale ? "badge-success" : "badge-info")">
+              @Model.OperationType.ToArabicText()
+          </span>
+          @if (Model.Status != PropertyStatus.Approved)
+          {
+              <span class="badge-custom badge-warning ms-auto"><i class="bi bi-hourglass-split me-1"></i> 
+                  @(Model.Status == PropertyStatus.Pending ? "قيد المراجعة" : "مرفوض")
+              </span>
+          }
+        </div>
+        <h1>@Model.Title</h1>
+        <p class="text-muted mb-0"><i class="bi bi-geo-alt text-accent me-1"></i> @Model.Governorate - @Model.CityAreaCamp، @Model.DetailedAddress</p>
+      </div>
+      <div class="col-lg-4 text-lg-end mt-3 mt-lg-0">
+        <div class="property-price-large">@Model.Price <span class="fs-6 fw-bold text-muted">₪</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="container mb-5">
+  <div class="row g-4">
+    <!-- Main Content -->
+    <div class="col-lg-8">
+      <!-- Image Gallery -->
+      <div class="property-gallery">
+        <img src="@mainImg" alt="Main Property Image" class="main-img mb-2" id="mainGalleryImg">
+        <div class="row g-2">
+            @foreach(var img in Model.ImageUrls)
+            {
+                <div class="col-3">
+                  <img src="@img" alt="Thumb" class="thumb-img">
+                </div>
+            }
+        </div>
+      </div>
+
+        <!-- Property Details -->
+      <div class="property-info-card">
+        <h4><i class="bi bi-info-circle me-2"></i> تفاصيل العقار</h4>
+        <div class="row mb-4">
+          <div class="col-6 col-md-3 mb-3">
+            <div class="text-muted small">نوع العقار</div>
+            <div class="fw-bold fs-5">@Model.PropertyType.ToArabicText()</div>
+          </div>
+          <div class="col-6 col-md-3 mb-3">
+            <div class="text-muted small">الغرض</div>
+            <div class="fw-bold fs-5">@Model.OperationType.ToArabicText()</div>
+          </div>
+          <div class="col-6 col-md-3 mb-3">
+            <div class="text-muted small">المحافظة</div>
+            <div class="fw-bold fs-5">@Model.Governorate</div>
+          </div>
+          <div class="col-6 col-md-3 mb-3">
+            <div class="text-muted small">المساحة</div>
+            <div class="fw-bold fs-5">@Model.Area م²</div>
+          </div>
+          <div class="col-6 col-md-3 mb-3">
+            <div class="text-muted small">الغرف</div>
+            <div class="fw-bold fs-5">@Model.Rooms</div>
+          </div>
+          <div class="col-6 col-md-3 mb-3">
+            <div class="text-muted small">الحمامات</div>
+            <div class="fw-bold fs-5">@Model.Bathrooms</div>
+          </div>
+          @if (!string.IsNullOrEmpty(Model.Floor))
+          {
+              <div class="col-6 col-md-3 mb-3">
+                <div class="text-muted small">الطابق</div>
+                <div class="fw-bold fs-5">@Model.Floor</div>
+              </div>
+          }
+        </div>
+        
+        <h4><i class="bi bi-card-text me-2"></i> الوصف</h4>
+        <p class="text-dark lh-18" style="white-space: pre-wrap;">@Model.Description</p>
+      </div>
+
+      <!-- Features -->
+      @if (!string.IsNullOrEmpty(Model.Features))
+      {
+          <div class="property-info-card">
+            <h4><i class="bi bi-stars me-2"></i> الميزات الإضافية</h4>
+            <ul class="property-features-list">
+              @foreach (var feature in Model.Features.Split(',', StringSplitOptions.RemoveEmptyEntries))
+              {
+                  <li><i class="bi bi-check-circle-fill"></i> @feature.Trim()</li>
+              }
+            </ul>
+          </div>
+      }
+
+    </div>
+
+    <!-- Sidebar / Contact -->
+    <div class="col-lg-4">
+      <div class="contact-owner-card">
+        <img src="https://ui-avatars.com/api/?name=@Uri.EscapeDataString(Model.OwnerName)&background=F5A623&color=fff" alt="Owner" class="owner-avatar">
+        <h5>@Model.OwnerName</h5>
+        <p>المالك</p>
+        <div class="d-flex flex-column gap-3 mt-4">
+          @if(!string.IsNullOrEmpty(Model.WhatsAppNumber))
+          {
+              <a href="https://wa.me/@Model.WhatsAppNumber.Replace("+","").Replace(" ","")" id="waContactBtn" target="_blank" class="btn whatsapp-btn">
+                <i class="bi bi-whatsapp fs-5"></i> تواصل عبر واتساب
+              </a>
+          }
+          @if(!string.IsNullOrEmpty(Model.ContactPhone))
+          {
+              <button id="callContactBtn" class="btn call-btn" data-phone="@Model.ContactPhone">
+                <i class="bi bi-telephone fs-5"></i> <span id="phoneText">عرض رقم الهاتف</span>
+              </button>
+          }
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
