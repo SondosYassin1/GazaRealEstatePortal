@@ -1,14 +1,22 @@
 @model GazaRealEstatePortal.ViewModels.ProfileViewModel
+@using GazaRealEstatePortal.Helpers
 @{
     ViewData["Title"] = "الملف الشخصي";
     Layout = "~/Views/Shared/_UserDashboardLayout.cshtml";
+    
+    string avatarSrc = string.IsNullOrEmpty(Model.AvatarUrl) 
+        ? $"https://ui-avatars.com/api/?name={Uri.EscapeDataString(Model.FullName)}&background=F5A623&color=fff&size=220" 
+        : Model.AvatarUrl;
+        
+    string userType = Model.PropertiesCount > 0 ? "صاحب عقار" : "مستخدم مسجل";
 }
 
 <div class="dashboard-header flex-wrap gap-3">
   <div>
     <h1>الملف الشخصي</h1>
-    <p>إدارة معلوماتك الشخصية وإعدادات الحساب.</p>
+    <p>إدارة معلوماتك الشخصية، إعدادات الحساب، ومتابعة عقاراتك.</p>
   </div>
+  <a href="@Url.Action("AddProperty", "Properties")" class="btn-accent"><i class="bi bi-plus-lg"></i> إضافة عقار</a>
 </div>
 
 @if (TempData["SuccessMessage"] != null)
@@ -25,17 +33,32 @@
   <div class="profile-hero-inner">
     <div class="d-flex flex-column flex-md-row align-items-center align-items-md-start gap-4">
       <div class="profile-avatar-wrap">
-        <img src="https://ui-avatars.com/api/?name=@Uri.EscapeDataString(Model.FullName)&background=F5A623&color=fff&size=220" alt="@Model.FullName" id="profileAvatarImg">
+        <img src="@avatarSrc" alt="@Model.FullName" id="profileAvatarImg">
+        <form id="quickAvatarForm" asp-action="UploadAvatar" method="post" enctype="multipart/form-data">
+            <label class="profile-avatar-edit" for="quickAvatarUpload" title="تغيير الصورة">
+              <i class="bi bi-camera-fill"></i>
+            </label>
+            <input type="file" name="avatarFile" id="quickAvatarUpload" accept="image/png, image/jpeg" class="d-none" onchange="document.getElementById('quickAvatarForm').submit();">
+        </form>
       </div>
       <div class="text-center text-md-start flex-grow-1">
         <div class="d-flex flex-wrap align-items-center justify-content-center justify-content-md-start gap-2 mb-2">
           <h2 class="fw-bold mb-0 fs-3" id="displayFullName">@Model.FullName</h2>
-          <span class="profile-verified"><i class="bi bi-patch-check-fill"></i> مستخدم مسجل</span>
+          <span class="profile-verified"><i class="bi bi-patch-check-fill"></i> حساب موثّق</span>
         </div>
-        <div class="profile-meta mt-3">
+        @if (!string.IsNullOrEmpty(Model.Bio))
+        {
+            <p class="mb-2 opacity-90" id="displayBio">@Model.Bio</p>
+        }
+        <div class="profile-meta">
           <span><i class="bi bi-envelope"></i> <span id="displayEmail">@Model.Email</span></span>
-          @if(!string.IsNullOrEmpty(Model.PhoneNumber)){
-            <span><i class="bi bi-telephone"></i> <span dir="ltr" id="displayPhone">@Model.PhoneNumber</span></span>
+          @if (!string.IsNullOrEmpty(Model.PhoneNumber))
+          {
+              <span><i class="bi bi-telephone"></i> <span dir="ltr" id="displayPhone">@Model.PhoneNumber</span></span>
+          }
+          @if (!string.IsNullOrEmpty(Model.City))
+          {
+              <span><i class="bi bi-geo-alt"></i> <span id="displayCity">@Model.City</span></span>
           }
         </div>
       </div>
@@ -43,15 +66,30 @@
   </div>
 </div>
 
+<!-- User Statistics -->
+<div class="row g-4 mb-4 justify-content-center">
+  <div class="col-12 col-md-6 col-lg-4">
+    <div class="stat-card">
+      <div class="stat-icon stat-icon-blue"><i class="bi bi-buildings"></i></div>
+      <div>
+        <div class="stat-value">@Model.PropertiesCount</div>
+        <div class="stat-label">عقارات منشورة</div>
+      </div>
+    </div>
+  </div>
+</div>
+
 <div class="row g-4">
   <!-- Account Settings Column -->
-  <div class="col-lg-6">
+  <div class="col-lg-5">
     <div class="card-custom p-4 h-100">
       <h4 class="fw-bold text-primary-custom mb-1 section-header-custom">إعدادات الحساب</h4>
-      <p class="text-muted small mb-4">تحديث بياناتك الشخصية</p>
+      <p class="text-muted small mb-4">تحديث بياناتك الشخصية وكلمة المرور</p>
 
       <div class="settings-tab-nav">
         <button type="button" class="settings-tab-btn active" data-tab="personal">المعلومات الشخصية</button>
+        <button type="button" class="settings-tab-btn" data-tab="password">كلمة المرور</button>
+        <button type="button" class="settings-tab-btn" data-tab="avatar">الصورة الشخصية</button>
       </div>
 
       <!-- Personal Info Tab -->
@@ -74,35 +112,207 @@
             <input asp-for="PhoneNumber" class="form-control-custom" dir="ltr">
             <span asp-validation-for="PhoneNumber" class="text-danger small mt-1 d-block"></span>
           </div>
+          <div class="form-group-custom">
+            <label asp-for="City" class="form-label-custom">المدينة</label>
+            <select asp-for="City" class="form-control-custom form-select-custom">
+              <option value="">اختر المدينة...</option>
+              <option value="الشمال">الشمال</option>
+              <option value="غزة">غزة</option>
+              <option value="الوسطى">الوسطى</option>
+              <option value="خانيونس">خانيونس</option>
+              <option value="رفح">رفح</option>
+            </select>
+          </div>
+          <div class="form-group-custom">
+            <label asp-for="Bio" class="form-label-custom">نبذة عني</label>
+            <textarea asp-for="Bio" class="form-control-custom" rows="4"></textarea>
+          </div>
           <button type="submit" class="btn-primary-custom w-100 justify-content-center">
             <i class="bi bi-check-lg"></i> حفظ المعلومات
           </button>
         </form>
       </div>
 
-    </div>
-  </div>
+      <!-- Password Tab -->
+      <div class="tab-panel" id="tab-password" style="display: none;">
+        <form asp-action="ChangePassword" method="post">
+          <div class="form-group-custom">
+            <label class="form-label-custom" for="oldPassword">كلمة المرور الحالية</label>
+            <input type="password" name="OldPassword" class="form-control-custom" id="oldPassword" placeholder="أدخل كلمة المرور الحالية" required>
+          </div>
+          <div class="form-group-custom">
+            <label class="form-label-custom" for="newPasswordProfile">كلمة المرور الجديدة</label>
+            <input type="password" name="NewPassword" class="form-control-custom" id="newPasswordProfile" placeholder="8 أحرف على الأقل" required minlength="8">
+          </div>
+          <div class="form-group-custom">
+            <label class="form-label-custom" for="confirmPasswordProfile">تأكيد كلمة المرور</label>
+            <input type="password" name="ConfirmNewPassword" class="form-control-custom" id="confirmPasswordProfile" placeholder="أعد إدخال كلمة المرور" required minlength="8">
+          </div>
+          <button type="submit" class="btn-accent w-100 justify-content-center">
+            <i class="bi bi-shield-lock"></i> تحديث كلمة المرور
+          </button>
+        </form>
+      </div>
 
-  <!-- Quick Info Card -->
-  <div class="col-lg-6">
-    <div class="card-custom p-4 h-100">
-      <h5 class="fw-bold text-primary-custom mb-4"><i class="bi bi-info-circle me-2"></i>معلومات الحساب</h5>
+      <!-- Avatar Tab -->
+      <div class="tab-panel" id="tab-avatar" style="display: none;">
+        <form asp-action="UploadAvatar" method="post" enctype="multipart/form-data" id="mainAvatarForm">
+            <div class="text-center mb-4">
+              <img src="@avatarSrc" alt="معاينة" class="rounded-circle border border-3 border-warning mb-3" width="120" height="120" id="avatarTabPreview">
+              <p class="text-muted small">الصورة الحالية — JPG أو PNG، 2MB كحد أقصى</p>
+            </div>
+            <div class="upload-zone py-4 mb-3" id="avatarUploadZone" role="button" tabindex="0" onclick="document.getElementById('avatarUploadInput').click();">
+              <div class="upload-icon"><i class="bi bi-person-bounding-box"></i></div>
+              <p class="fw-bold text-primary-custom mb-1">رفع صورة شخصية جديدة</p>
+              <p class="text-muted small mb-0">انقر أو اسحب الصورة هنا</p>
+              <input type="file" name="avatarFile" id="avatarUploadInput" accept="image/png, image/jpeg" class="d-none" onchange="previewAvatar(this)">
+            </div>
+            <button type="submit" class="btn-primary-custom w-100 justify-content-center" id="saveAvatarBtn">
+              <i class="bi bi-upload"></i> حفظ الصورة الجديدة
+            </button>
+        </form>
+      </div>
+    </div>
+
+    <!-- Quick Info Card -->
+    <div class="card-custom p-4 mt-4">
+      <h5 class="fw-bold text-primary-custom mb-3"><i class="bi bi-info-circle me-2"></i>معلومات الحساب</h5>
       <div class="info-row">
         <span class="label">نوع الحساب</span>
-        <span class="value"><span class="badge-custom badge-primary-soft">مستخدم مسجل</span></span>
+        <span class="value"><span class="badge-custom badge-primary-soft">@userType</span></span>
       </div>
       <div class="info-row">
         <span class="label">تاريخ التسجيل</span>
-        <span class="value">مسجل في النظام</span>
+        <span class="value">@Model.CreatedAt.ToString("dd MMMM yyyy")</span>
       </div>
       <div class="info-row">
         <span class="label">حالة الحساب</span>
-        <span class="value"><span class="badge-custom badge-success">نشط</span></span>
+        <span class="value">
+            @if (Model.IsActive)
+            {
+                <span class="badge-custom badge-success">نشط</span>
+            }
+            else
+            {
+                <span class="badge-custom badge-danger">غير نشط</span>
+            }
+        </span>
       </div>
+    </div>
+  </div>
+
+  <!-- Recent Properties Column -->
+  <div class="col-lg-7">
+    <div class="card-custom p-4 h-100">
+      <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-4">
+        <div>
+          <h4 class="fw-bold text-primary-custom mb-1">أحدث العقارات المضافة</h4>
+          <p class="text-muted small mb-0">آخر العقارات التي قمت بنشرها على المنصة</p>
+        </div>
+        <a href="@Url.Action("Dashboard", "Properties")" class="view-all-link">عرض الكل <i class="bi bi-arrow-left"></i></a>
+      </div>
+
+      @if (Model.RecentProperties == null || !Model.RecentProperties.Any())
+      {
+          <div class="alert alert-info text-center py-4">
+              <i class="bi bi-info-circle-fill fs-4 d-block mb-2"></i>
+              لا توجد عقارات مضافة بعد. 
+              <br>
+              <a href="@Url.Action("AddProperty", "Properties")" class="btn btn-sm btn-outline-primary mt-2">إضافة عقار الآن</a>
+          </div>
+      }
+      else
+      {
+          <div class="table-responsive">
+            <table class="table-custom">
+              <thead>
+                <tr>
+                  <th>العقار</th>
+                  <th>النوع</th>
+                  <th>السعر</th>
+                  <th>الحالة</th>
+                  <th>الإجراءات</th>
+                </tr>
+              </thead>
+              <tbody>
+                @foreach (var prop in Model.RecentProperties)
+                {
+                    <tr class="recent-property-row">
+                      <td>
+                        <div class="d-flex align-items-center gap-3">
+                          <img src="@prop.MainImageUrl" alt="@prop.PropertyType.GetDisplayName()" class="property-list-img">
+                          <div>
+                            <div class="fw-bold text-primary">@prop.Title</div>
+                            <div class="text-muted small"><i class="bi bi-geo-alt"></i> @prop.Governorate @(string.IsNullOrEmpty(prop.CityAreaCamp) ? "" : "— " + prop.CityAreaCamp)</div>
+                          </div>
+                        </div>
+                      </td>
+                      <td>@prop.PropertyType.GetDisplayName()</td>
+                      <td class="fw-bold">
+                        @prop.Price.ToString("N0") $
+                        @if(prop.OperationType == GazaRealEstatePortal.Models.Enums.OperationType.Rent){<text>/شهر</text>}
+                      </td>
+                      <td>
+                          @switch (prop.Status)
+                          {
+                              case GazaRealEstatePortal.Models.Enums.PropertyStatus.Approved:
+                                  <span class="badge-custom badge-success">معتمد</span>
+                                  break;
+                              case GazaRealEstatePortal.Models.Enums.PropertyStatus.Pending:
+                                  <span class="badge-custom badge-warning">قيد المراجعة</span>
+                                  break;
+                              case GazaRealEstatePortal.Models.Enums.PropertyStatus.Rejected:
+                                  <span class="badge-custom badge-danger">مرفوض</span>
+                                  break;
+                          }
+                      </td>
+                      <td>
+                        <div class="d-flex gap-1">
+                          <a href="@Url.Action("PropertyDetails", "Home", new { id = prop.Id })" class="action-btn action-btn-view" title="عرض"><i class="bi bi-eye"></i></a>
+                          <a href="@Url.Action("EditProperty", "Properties", new { id = prop.Id })" class="action-btn action-btn-edit" title="تعديل"><i class="bi bi-pencil"></i></a>
+                        </div>
+                      </td>
+                    </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+      }
     </div>
   </div>
 </div>
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
+    <script>
+        // Tabs functionality
+        document.querySelectorAll('.settings-tab-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                // Remove active from all tabs and panels
+                document.querySelectorAll('.settings-tab-btn').forEach(b => b.classList.remove('active'));
+                document.querySelectorAll('.tab-panel').forEach(p => {
+                    p.classList.remove('active');
+                    p.style.display = 'none';
+                });
+                
+                // Add active to current
+                this.classList.add('active');
+                const targetId = 'tab-' + this.getAttribute('data-tab');
+                const targetPanel = document.getElementById(targetId);
+                targetPanel.classList.add('active');
+                targetPanel.style.display = 'block';
+            });
+        });
+
+        // Image Preview
+        function previewAvatar(input) {
+            if (input.files && input.files[0]) {
+                var reader = new FileReader();
+                reader.onload = function(e) {
+                    document.getElementById('avatarTabPreview').src = e.target.result;
+                }
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+    </script>
 }
