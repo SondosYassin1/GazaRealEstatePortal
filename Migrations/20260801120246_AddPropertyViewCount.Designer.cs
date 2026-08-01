@@ -4,6 +4,7 @@ using GazaRealEstatePortal.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace GazaRealEstatePortal.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260801120246_AddPropertyViewCount")]
+    partial class AddPropertyViewCount
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -94,6 +97,9 @@ namespace GazaRealEstatePortal.Migrations
                     b.Property<int>("UserId")
                         .HasColumnType("int");
 
+                    b.Property<int>("ViewCount")
+                        .HasColumnType("int");
+
                     b.Property<string>("WhatsAppNumber")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -126,6 +132,7 @@ namespace GazaRealEstatePortal.Migrations
                             Title = "شقة سكنية فاخرة",
                             UpdatedAt = new DateTime(2026, 7, 30, 14, 55, 9, 0, DateTimeKind.Utc),
                             UserId = 2,
+                            ViewCount = 0,
                             WhatsAppNumber = "00970593617699"
                         },
                         new
@@ -149,6 +156,7 @@ namespace GazaRealEstatePortal.Migrations
                             Title = "فيلا حديثة التصميم",
                             UpdatedAt = new DateTime(2026, 7, 30, 14, 55, 9, 0, DateTimeKind.Utc),
                             UserId = 2,
+                            ViewCount = 0,
                             WhatsAppNumber = "00970593617699"
                         },
                         new
@@ -172,6 +180,7 @@ namespace GazaRealEstatePortal.Migrations
                             Title = "أرض زراعية",
                             UpdatedAt = new DateTime(2026, 7, 30, 14, 55, 9, 0, DateTimeKind.Utc),
                             UserId = 2,
+                            ViewCount = 0,
                             WhatsAppNumber = "00970593617699"
                         },
                         new
@@ -195,6 +204,7 @@ namespace GazaRealEstatePortal.Migrations
                             Title = "مكتب تجاري مجهز",
                             UpdatedAt = new DateTime(2026, 7, 30, 14, 55, 9, 0, DateTimeKind.Utc),
                             UserId = 2,
+                            ViewCount = 0,
                             WhatsAppNumber = "00970593617699"
                         },
                         new
@@ -218,6 +228,7 @@ namespace GazaRealEstatePortal.Migrations
                             Title = "منزل مستقل",
                             UpdatedAt = new DateTime(2026, 7, 30, 14, 55, 9, 0, DateTimeKind.Utc),
                             UserId = 2,
+                            ViewCount = 0,
                             WhatsAppNumber = "00970593617699"
                         },
                         new
@@ -241,6 +252,7 @@ namespace GazaRealEstatePortal.Migrations
                             Title = "شقة عائلية",
                             UpdatedAt = new DateTime(2026, 7, 30, 14, 55, 9, 0, DateTimeKind.Utc),
                             UserId = 2,
+                            ViewCount = 0,
                             WhatsAppNumber = "00970593617699"
                         });
                 });
