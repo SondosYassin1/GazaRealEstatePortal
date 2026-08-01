@@ -10,8 +10,12 @@
     <p>عرض تفاصيل المستخدمين في المنصة.</p>
   </div>
   <div class="mt-3 mt-md-0 search-bar-wrap w-100 max-w-300">
-    <input type="text" placeholder="بحث باسم المستخدم...">
-    <i class="bi bi-search search-icon"></i>
+    <form method="get" asp-action="Users" class="d-flex w-100 m-0 p-0 position-relative">
+      <input type="text" name="searchTerm" value="@ViewBag.SearchTerm" placeholder="بحث باسم المستخدم أو الإيميل..." class="w-100 form-control rounded-pill border-0 bg-light pe-4 ps-5">
+      <button type="submit" class="border-0 bg-transparent position-absolute" style="left: 15px; top: 50%; transform: translateY(-50%);">
+        <i class="bi bi-search text-muted"></i>
+      </button>
+    </form>
   </div>
 </div>
 
