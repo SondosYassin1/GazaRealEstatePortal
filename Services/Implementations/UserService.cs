@@ -117,7 +117,7 @@ public class UserService : IUserService
         return await _context.Users.CountAsync(u => u.IsActive);
     }
 
-    public async Task UpdateProfileAsync(int id, string fullName, string phoneNumber)
+    public async Task UpdateProfileAsync(int id, string fullName, string phoneNumber, string? city, string? bio)
     {
         var user = await _context.Users.FindAsync(id);
         if (user == null)
@@ -127,7 +127,44 @@ public class UserService : IUserService
 
         user.FullName = fullName;
         user.PhoneNumber = phoneNumber;
+        user.City = city;
+        user.Bio = bio;
 
+        await _context.SaveChangesAsync();
+    }
+
+    public async Task ChangePasswordAsync(int id, string oldPassword, string newPassword)
+    {
+        var user = await _context.Users.FindAsync(id);
+        if (user == null)
+        {
+            throw new KeyNotFoundException("المستخدم غير موجود.");
+        }
+
+        if (user.PasswordHash == null)
+        {
+            throw new ArgumentException("هذا الحساب مسجل عبر طريقة أخرى ولا يمكن تغيير كلمة مروره.");
+        }
+
+        bool isPasswordValid = BCrypt.Net.BCrypt.Verify(oldPassword, user.PasswordHash);
+        if (!isPasswordValid)
+        {
+            throw new ArgumentException("كلمة المرور الحالية غير صحيحة.");
+        }
+
+        user.PasswordHash = BCrypt.Net.BCrypt.HashPassword(newPassword);
+        await _context.SaveChangesAsync();
+    }
+
+    public async Task UpdateAvatarAsync(int id, string avatarUrl)
+    {
+        var user = await _context.Users.FindAsync(id);
+        if (user == null)
+        {
+            throw new KeyNotFoundException("المستخدم غير موجود.");
+        }
+
+        user.AvatarUrl = avatarUrl;
         await _context.SaveChangesAsync();
     }
 }
