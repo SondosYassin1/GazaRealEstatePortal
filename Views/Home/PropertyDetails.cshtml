@@ -118,7 +118,7 @@
         <div class="d-flex flex-column gap-3 mt-4">
           @if(!string.IsNullOrEmpty(Model.WhatsAppNumber))
           {
-              <a href="https://wa.me/@Model.WhatsAppNumber.Replace("+","").Replace(" ","")" id="waContactBtn" target="_blank" class="btn whatsapp-btn">
+              <a href="https://wa.me/@(Model.WhatsAppNumber.StartsWith("00") ? Model.WhatsAppNumber.Substring(2) : Model.WhatsAppNumber)" id="waContactBtn" target="_blank" class="btn whatsapp-btn">
                 <i class="bi bi-whatsapp fs-5"></i> تواصل عبر واتساب
               </a>
           }
