@@ -1,3 +1,4 @@
+@inject GazaRealEstatePortal.Services.Interfaces.IUserService UserService
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
@@ -27,24 +28,32 @@
       <a asp-controller="Home" asp-action="Index" class="sidebar-link">
         <i class="bi bi-house"></i> الصفحة الرئيسية
       </a>
-      <a asp-controller="Properties" asp-action="Dashboard" class="sidebar-link @(ViewContext.RouteData.Values["Action"].ToString() == "Dashboard" ? "active" : "")">
+      <a asp-controller="Properties" asp-action="Dashboard" class="sidebar-link @(ViewContext.RouteData.Values["Action"]?.ToString() == "Dashboard" ? "active" : "")">
         <i class="bi bi-grid-1x2"></i> لوحة التحكم
       </a>
-      <a asp-controller="Properties" asp-action="AddProperty" class="sidebar-link @(ViewContext.RouteData.Values["Action"].ToString() == "AddProperty" ? "active" : "")">
+      <a asp-controller="Properties" asp-action="AddProperty" class="sidebar-link @(ViewContext.RouteData.Values["Action"]?.ToString() == "AddProperty" ? "active" : "")">
         <i class="bi bi-plus-square"></i> إضافة عقار
       </a>
       
       <div class="nav-section-title mt-3">الإعدادات</div>
-      <a href="#" class="sidebar-link">
+      <a asp-controller="Properties" asp-action="Profile" class="sidebar-link @(ViewContext.RouteData.Values["Action"]?.ToString() == "Profile" ? "active" : "")">
         <i class="bi bi-person"></i> الملف الشخصي
       </a>
     </div>
     
     <div class="sidebar-footer">
       <div class="sidebar-user mb-3">
-        <img src="https://ui-avatars.com/api/?name=@Uri.EscapeDataString(User.Identity?.Name ?? "User")&background=F5A623&color=fff" alt="User" class="rounded-circle border border-warning" width="38" height="38">
+        @{
+            int currentUserId = int.TryParse(User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value, out int id) ? id : 0;
+            var currentUser = await UserService.GetByIdAsync(currentUserId);
+            string userAvatar = !string.IsNullOrEmpty(currentUser?.AvatarUrl) 
+                ? currentUser.AvatarUrl 
+                : $"https://ui-avatars.com/api/?name={Uri.EscapeDataString(currentUser?.FullName ?? "User")}&background=F5A623&color=fff";
+            string displayName = currentUser?.FullName ?? "مستخدم";
+        }
+        <img src="@userAvatar" alt="User" class="rounded-circle border border-warning" style="object-fit: cover;" width="38" height="38">
         <div class="user-info">
-          <div>@User.Identity?.Name</div>
+          <div>@displayName</div>
           <small class="text-white-50">مستخدم مسجل</small>
         </div>
       </div>
