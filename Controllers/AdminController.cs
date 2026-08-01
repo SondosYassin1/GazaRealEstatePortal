@@ -168,10 +168,18 @@ public class AdminController : Controller
     }
 
     [HttpGet]
-    public async Task<IActionResult> Users()
+    public async Task<IActionResult> Users(string? searchTerm)
     {
         var users = await _userService.GetAllAsync();
-        // Just pass the List<User> to the view directly since it's a read-only view and we don't need a specific ViewModel for now.
+        
+        if (!string.IsNullOrWhiteSpace(searchTerm))
+        {
+            var lowerSearch = searchTerm.ToLower();
+            users = users.Where(u => u.FullName.ToLower().Contains(lowerSearch) || 
+                                     u.Email.ToLower().Contains(lowerSearch)).ToList();
+        }
+
+        ViewBag.SearchTerm = searchTerm;
         return View(users);
     }
 }

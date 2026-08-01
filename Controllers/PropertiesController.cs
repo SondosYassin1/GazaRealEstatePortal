@@ -15,11 +15,13 @@ public class PropertiesController : Controller
 {
     private readonly IPropertyService _propertyService;
     private readonly IUserService _userService;
+    private readonly Microsoft.AspNetCore.Hosting.IWebHostEnvironment _webHostEnvironment;
 
-    public PropertiesController(IPropertyService propertyService, IUserService userService)
+    public PropertiesController(IPropertyService propertyService, IUserService userService, Microsoft.AspNetCore.Hosting.IWebHostEnvironment webHostEnvironment)
     {
         _propertyService = propertyService;
         _userService = userService;
+        _webHostEnvironment = webHostEnvironment;
     }
 
     private int GetCurrentUserId()
@@ -213,11 +215,32 @@ public class PropertiesController : Controller
         var user = await _userService.GetByIdAsync(userId);
         if (user == null) return NotFound();
 
+        var userProperties = await _propertyService.GetByUserAsync(userId);
+
         var model = new ProfileViewModel
         {
             FullName = user.FullName,
             PhoneNumber = user.PhoneNumber,
-            Email = user.Email
+            Email = user.Email,
+            City = user.City,
+            Bio = user.Bio,
+            AvatarUrl = user.AvatarUrl,
+            CreatedAt = user.CreatedAt,
+            IsActive = user.IsActive,
+            PropertiesCount = userProperties.Count,
+            RecentProperties = userProperties.OrderByDescending(p => p.CreatedAt).Take(4).Select(p => new PropertyCardViewModel
+            {
+                Id = p.Id,
+                Title = p.Title,
+                Price = p.Price,
+                OperationType = p.OperationType,
+                PropertyType = p.PropertyType,
+                Governorate = p.Governorate,
+                CityAreaCamp = p.CityAreaCamp,
+                MainImageUrl = p.Images.FirstOrDefault()?.ImageUrl ?? "/images/default-property.jpg",
+                Status = p.Status,
+                CreatedAt = p.CreatedAt
+            }).ToList()
         };
 
         return View(model);
@@ -226,13 +249,86 @@ public class PropertiesController : Controller
     [HttpPost]
     public async Task<IActionResult> Profile(ProfileViewModel model)
     {
+        ModelState.Remove("RecentProperties");
         if (!ModelState.IsValid)
-            return View(model);
+        {
+            TempData["ErrorMessage"] = "يوجد خطأ في البيانات المدخلة.";
+            return RedirectToAction(nameof(Profile));
+        }
 
         int userId = GetCurrentUserId();
-        await _userService.UpdateProfileAsync(userId, model.FullName, model.PhoneNumber);
+        await _userService.UpdateProfileAsync(userId, model.FullName, model.PhoneNumber, model.City, model.Bio);
         
         TempData["SuccessMessage"] = "تم تحديث البيانات بنجاح.";
+        return RedirectToAction(nameof(Profile));
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> ChangePassword(ChangePasswordViewModel model)
+    {
+        if (!ModelState.IsValid)
+        {
+            TempData["ErrorMessage"] = "يوجد خطأ في البيانات المدخلة لتغيير كلمة المرور.";
+            return RedirectToAction(nameof(Profile));
+        }
+
+        int userId = GetCurrentUserId();
+        try
+        {
+            await _userService.ChangePasswordAsync(userId, model.OldPassword, model.NewPassword);
+            TempData["SuccessMessage"] = "تم تغيير كلمة المرور بنجاح.";
+        }
+        catch (ArgumentException ex)
+        {
+            TempData["ErrorMessage"] = ex.Message;
+        }
+
+        return RedirectToAction(nameof(Profile));
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> UploadAvatar(Microsoft.AspNetCore.Http.IFormFile avatarFile)
+    {
+        if (avatarFile == null || avatarFile.Length == 0)
+        {
+            TempData["ErrorMessage"] = "لم يتم تحديد أي ملف.";
+            return RedirectToAction(nameof(Profile));
+        }
+
+        if (avatarFile.Length > 2 * 1024 * 1024)
+        {
+            TempData["ErrorMessage"] = "حجم الصورة يجب أن لا يتجاوز 2 ميغابايت.";
+            return RedirectToAction(nameof(Profile));
+        }
+
+        var allowedExtensions = new[] { ".jpg", ".jpeg", ".png" };
+        var extension = System.IO.Path.GetExtension(avatarFile.FileName).ToLowerInvariant();
+        
+        if (!allowedExtensions.Contains(extension))
+        {
+            TempData["ErrorMessage"] = "نوع الملف غير مدعوم. مسموح فقط بـ JPG و PNG.";
+            return RedirectToAction(nameof(Profile));
+        }
+
+        string uploadsFolder = System.IO.Path.Combine(_webHostEnvironment.WebRootPath, "uploads", "avatars");
+        if (!System.IO.Directory.Exists(uploadsFolder))
+        {
+            System.IO.Directory.CreateDirectory(uploadsFolder);
+        }
+
+        string uniqueFileName = Guid.NewGuid().ToString() + extension;
+        string filePath = System.IO.Path.Combine(uploadsFolder, uniqueFileName);
+
+        using (var fileStream = new System.IO.FileStream(filePath, System.IO.FileMode.Create))
+        {
+            await avatarFile.CopyToAsync(fileStream);
+        }
+
+        int userId = GetCurrentUserId();
+        string avatarUrl = $"/uploads/avatars/{uniqueFileName}";
+        await _userService.UpdateAvatarAsync(userId, avatarUrl);
+
+        TempData["SuccessMessage"] = "تم تحديث الصورة الشخصية بنجاح.";
         return RedirectToAction(nameof(Profile));
     }
 }
