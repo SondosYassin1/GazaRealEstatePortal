@@ -30,6 +30,15 @@ public class User
 
     public UserRole Role { get; set; } = UserRole.RegisteredUser;
 
+    [MaxLength(50)]
+    public string? City { get; set; }
+
+    [MaxLength(500)]
+    public string? Bio { get; set; }
+
+    [MaxLength(255)]
+    public string? AvatarUrl { get; set; }
+
     public DateTime CreatedAt { get; set; } = DateTime.Now;
 
     public bool IsActive { get; set; } = true;
