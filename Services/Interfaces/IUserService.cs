@@ -13,5 +13,7 @@ public interface IUserService
     Task<User?> GetByIdAsync(int id);
     Task<List<User>> GetAllAsync();
     Task<int> GetActiveUsersCountAsync();
-    Task UpdateProfileAsync(int id, string fullName, string phoneNumber);
+    Task UpdateProfileAsync(int id, string fullName, string phoneNumber, string? city, string? bio);
+    Task ChangePasswordAsync(int id, string oldPassword, string newPassword);
+    Task UpdateAvatarAsync(int id, string avatarUrl);
 }
