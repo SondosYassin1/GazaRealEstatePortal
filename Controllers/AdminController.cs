@@ -10,7 +10,7 @@ using System;
 
 namespace GazaRealEstatePortal.Controllers;
 
-//[Authorize(Roles = "Admin")]
+[Authorize(Roles = "Admin")]
 public class AdminController : Controller
 {
     private readonly IPropertyService _propertyService;
