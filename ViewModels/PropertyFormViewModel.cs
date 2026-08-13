@@ -49,7 +49,7 @@ public class PropertyFormViewModel
     public List<string> SelectedFeatures { get; set; } = new List<string>();
 
     [Required(ErrorMessage = "رقم الهاتف مطلوب")]
-    [RegularExpression(@"^05\d{8}$", ErrorMessage = "رقم الهاتف يجب أن يبدأ بـ 05 ويتكون من 10 أرقام بالكامل، مثال: 0593617699")]
+    [RegularExpression(@"^059\d{7}$", ErrorMessage = "رقم الهاتف يجب أن يبدأ بـ 059 ويتكون من 10 أرقام بالكامل، مثال: 0593617699")]
     public string ContactPhone { get; set; } = string.Empty;
 
     [Required(ErrorMessage = "رقم الواتساب مطلوب")]
